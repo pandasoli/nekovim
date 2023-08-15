@@ -1,16 +1,7 @@
 require 'lib.str_utils'
 
 ScriptPath = debug.getinfo(1, 'S').source:sub(2)
-
-do
-  local f = assert(io.popen('ls lua/deps'))
-  local deps = f:read('*a'):split '\n'
-
-  for _, dep in ipairs(deps) do
-    local path = 'lua/deps/' .. dep .. '/?.lua'
-    package.path = package.path .. ';' .. path
-  end
-end
+package.path = package.path .. ';lua/deps/?.lua'
 
 ---@param original table
 ---@return table
