@@ -4,7 +4,7 @@ local EventHandlers = require 'nekovim.event_handlers'
 local VimUtils = require 'nekovim.vim_utils'
 local Logger = require 'lib.log'
 
-require 'nekovim.check_presence_makers'
+require 'utils.maker_to'
 
 
 ---@class NekoVim
@@ -58,45 +58,53 @@ function NekoVim:make_buf_props()
   }
 end
 
----@return Presence|nil
-function NekoVim:make_activity()
+---@return Presence?
+function NekoVim:make_presence()
+  if type(self.presence_makers) ~= 'table' then return end
+
   local makers = self.presence_makers
-
-  if not CheckPresenceMakers(makers) then
-    return
-  end
-
   ---@type Presence
-  local activity = {
-    state   = makers.state(self),
-    details = makers.details(self),
+  local presence = {}
 
-    timestamps = {
-      start   = makers.timestamps.start  (self),
-      ['end'] = makers.timestamps ['end'](self)
-    },
+  presence.state = Maker_tostring(makers.state, self)
+  presence.details = Maker_tostring(makers.details, self)
 
-    assets = {
-      large_image = makers.assets.large_image(self),
-      large_text  = makers.assets.large_text (self),
-      small_image = makers.assets.small_image(self),
-      small_text  = makers.assets.small_text (self)
-    },
+  if type(makers.timestamps) == 'table' then
+    presence.timestamps = {}
 
-    buttons = {}
-  }
-
-  for _, maker in ipairs(self.presence_makers.buttons) do
-    table.insert(activity.buttons, maker(self))
+    presence.timestamps.start = Maker_tonumber(makers.timestamps.start, self)
+    presence.timestamps['end'] = Maker_tonumber(makers.timestamps['end'], self)
   end
 
-  return activity
+  if type(makers.assets) == 'table' then
+    presence.assets = {}
+
+    presence.assets.large_image = Maker_tostring(makers.assets.large_image, self)
+    presence.assets.large_text  = Maker_tostring(makers.assets.large_text , self)
+    presence.assets.small_image = Maker_tostring(makers.assets.small_image, self)
+    presence.assets.small_text  = Maker_tostring(makers.assets.small_text , self)
+  end
+
+  if type(makers.buttons) == 'table' then
+    presence.buttons = {}
+
+    for _, maker in ipairs(makers.buttons) do
+      table.insert(presence.buttons, Maker_totable(maker, self))
+    end
+  end
+
+  vim.schedule(function()
+    local body = vim.fn.json_encode(presence)
+    print(body)
+  end)
+
+  return presence
 end
 
 -- // Events // --
 
 function NekoVim:update()
-  local activity = self:make_activity()
+  local activity = self:make_presence()
   if not activity then return end
 end
 
