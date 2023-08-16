@@ -12,7 +12,7 @@ function EventHandlers:setup(nekovim, log_to_file)
   self.nekovim = nekovim
 
   local events = {
-    ['QuitPre'] = function() self.nekovim:shutdown() end,
+    ['VimLeavePre'] = function() self.nekovim:shutdown() end,
     ['FocusGained'] = function() self.nekovim:update() end,
 
     ['BufEnter'] = function() self:handle_BufEnter() end,
