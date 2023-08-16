@@ -11,7 +11,8 @@
 ---@class PresenceMakers : Presence
 ---@field client_id  (fun(self: NekoVim): string)|string
 ---
----@field state?   (fun(self: NekoVim): string)|string
----@field details? (fun(self: NekoVim): string)|string
----@field assets?  PresenceMakersAssets
----@field buttons? ((fun(self: NekoVim): PresenceButton)|PresenceButton)[]
+---@field state?     (fun(self: NekoVim): string)|string
+---@field details?   (fun(self: NekoVim): string)|string
+---@field timestamps PresenceMakersTimestamps
+---@field assets?    PresenceMakersAssets
+---@field buttons?   ((fun(self: NekoVim): PresenceButton)|PresenceButton)[]
