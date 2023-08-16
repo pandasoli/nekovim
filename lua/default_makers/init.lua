@@ -54,7 +54,24 @@ local makers = {
     else
       return 'Doing stuff for ' .. fileName .. ' in ' .. mode .. ' mode'
     end
-  end
+  end,
+
+  buttons = {
+    function()
+      local f = assert(io.popen("git remote -v | grep -Po '(?<=[:/])([\\w-]+/[\\w-]+)'"))
+      local output = assert(f:read('*a'))
+      f:close()
+
+      local err_msg = 'fatal: not a git repository'
+      if output:sub(1, #err_msg) == err_msg then
+        return
+      end
+
+      local repos = output:split '\n'
+
+      return { label = 'GitHub repo', url = 'https://github.com/' .. repos[1] }
+    end
+  }
 }
 
 return makers
