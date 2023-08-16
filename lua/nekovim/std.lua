@@ -1,7 +1,7 @@
 require 'lib.str_utils'
 
 ScriptPath = debug.getinfo(1, 'S').source:sub(2)
-package.path = package.path .. ';lua/deps/?.lua'
+package.path = package.path .. ';' .. ScriptPath:match '(.*)/.*/' .. '/deps/?.lua'
 
 ---@param original table
 ---@return table
