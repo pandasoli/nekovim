@@ -127,6 +127,8 @@ function NekoVim:make_presence()
     for _, maker in ipairs(makers.buttons) do
       table.insert(presence.buttons, Maker_totable(maker, self))
     end
+
+    presence.buttons = #presence.buttons > 0 and presence.buttons or nil
   end
 
   return presence

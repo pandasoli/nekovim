@@ -58,7 +58,7 @@ local makers = {
 
   buttons = {
     function()
-      local f = assert(io.popen("git remote -v | grep -Po '(?<=[:/])([\\w-]+/[\\w-]+)'"))
+      local f = assert(io.popen('git remote -v 2> /dev/null'))
       local output = assert(f:read('*a'))
       f:close()
 
@@ -67,9 +67,10 @@ local makers = {
         return
       end
 
-      local repos = output:split '\n'
-
-      return { label = 'GitHub repo', url = 'https://github.com/' .. repos[1] }
+      local repo = output:match '[:/]([%w-]+/[%w-]+)'
+      if repo then
+        return { label = 'GitHub repo', url = 'https://github.com/' .. repo }
+      end
     end
   }
 }
