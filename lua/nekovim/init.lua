@@ -1,12 +1,13 @@
 require 'nekovim.std'
+require 'utils.maker_to'
 
+local DefaultMakers = require 'default_makers'
 local EventHandlers = require 'nekovim.event_handlers'
 local VimUtils = require 'nekovim.vim_utils'
 local Logger = require 'lib.log'
 
 local Discord = require 'deps.discord'
 
-require 'utils.maker_to'
 
 
 ---@class NekoVim
@@ -18,8 +19,11 @@ local NekoVim = {}
 
 ---@param makers PresenceMakers
 function NekoVim:setup(makers)
-  self.presence_makers = makers
   self.logger = Logger
+  self.presence_props = {}
+  self.presence_makers = JoinTables(DefaultMakers, makers)
+
+  self.presence_props.startTimestamp = os.time()
 
   self:connect()
 
