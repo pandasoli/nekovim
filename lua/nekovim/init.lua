@@ -4,6 +4,8 @@ local EventHandlers = require 'nekovim.event_handlers'
 local VimUtils = require 'nekovim.vim_utils'
 local Logger = require 'lib.log'
 
+local Discord = require 'deps.discord'
+
 require 'utils.maker_to'
 
 
@@ -19,10 +21,26 @@ function NekoVim:setup(makers)
   self.presence_makers = makers
   self.logger = Logger
 
+  self:connect()
+
   EventHandlers:setup(self, true)
 
   VimUtils.CreateUserCommand('PrintNekoLogs', 'lua package.loaded.nekovim.logger:print()', { nargs = 0 })
   VimUtils.SetVar('loaded_nekovim', 1)
+end
+
+function NekoVim:connect()
+  local makers = self.presence_makers
+  if type(makers) ~= 'table' then
+    return Logger:log('NekoVim:connect', "Could not get cliend_id; Presence Makers are not a table")
+  end
+
+  local client_id = Maker_tostring(makers.client_id, self)
+  if type(client_id) ~= 'string' then
+    return Logger:log('NekoVim:connect', "cliend_id is not a string")
+  end
+
+  Discord:setup(client_id, Logger)
 end
 
 -- // Data Makers // --
@@ -106,9 +124,12 @@ end
 function NekoVim:update()
   local activity = self:make_presence()
   if not activity then return end
+
+  Discord:set_activity(activity)
 end
 
 function NekoVim:shutdown()
+  Discord:disconnect()
 end
 
 return NekoVim

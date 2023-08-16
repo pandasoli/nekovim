@@ -9,7 +9,7 @@
 ---@field end?   (fun(self: NekoVim): integer)|integer
 
 ---@class PresenceMakers : Presence
----@field app_id  (fun(self: NekoVim): string)|string
+---@field client_id  (fun(self: NekoVim): string)|string
 ---
 ---@field state?   (fun(self: NekoVim): string)|string
 ---@field details? (fun(self: NekoVim): string)|string

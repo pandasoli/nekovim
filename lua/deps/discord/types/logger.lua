@@ -1,0 +1,2 @@
+---@class Logger
+---@field log fun(self: Logger, from: string, ...: any)
