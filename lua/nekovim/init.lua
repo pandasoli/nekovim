@@ -41,7 +41,7 @@ function NekoVim:setup(makers)
     self:connect()
   end
 
-  EventHandlers:setup(self, true)
+  EventHandlers:setup(self, false)
 
   VimUtils.CreateUserCommand('PrintNekoLogs', 'lua package.loaded.nekovim.logger:print()', { nargs = 0 })
   VimUtils.SetVar('loaded_nekovim', 1)
