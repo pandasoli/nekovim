@@ -6,26 +6,40 @@ local EventHandlers = require 'nekovim.event_handlers'
 local VimUtils = require 'nekovim.vim_utils'
 local Logger = require 'lib.log'
 
+local VimSockets = require 'deps.vim-sockets'
 local Discord = require 'deps.discord'
-
 
 
 ---@class NekoVim
 ---@field presence_makers PresenceMakers
 ---@field presence_props  PresenceProps
 ---@field buffer_props    BufferProps
+---@field vim_sockets     VimSockets
 ---@field logger Logger
 local NekoVim = {}
 
 ---@param makers PresenceMakers
 function NekoVim:setup(makers)
   self.logger = Logger
-  self.presence_props = {}
   self.presence_makers = JoinTables(DefaultMakers, makers)
-
+  self.presence_props = {}
   self.presence_props.startTimestamp = os.time()
 
-  self:connect()
+  self.vim_sockets = VimSockets.new('package.loaded.nekovim.vim_sockets', Logger)
+
+  self.vim_sockets:on('update presence', function(props)
+    Logger:log('NekoVim:on update presence', 'Received presence:', props.data ~= nil)
+    self:update(props.data)
+  end)
+
+  self.vim_sockets:on('make connection', function(props)
+    Logger:log('NekoVim:on make connection', 'Received from', props.socket_emmiter)
+    self:connect()
+  end)
+
+  if #self.vim_sockets.sockets == 0 then
+    self:connect()
+  end
 
   EventHandlers:setup(self, true)
 
@@ -120,15 +134,36 @@ end
 
 -- // Events // --
 
-function NekoVim:update()
-  local activity = self:make_presence()
-  if not activity then return end
+---@param presence? Presence
+function NekoVim:update(presence)
+  if not presence then
+    presence = self:make_presence()
+    if not presence then return end
 
-  Discord:set_activity(activity)
+    if Discord.tried_connection then
+      Logger:log('NekoVim:update', 'Setting presence')
+      Discord:set_activity(presence)
+    else
+      Logger:log('NekoVim:update', 'Emitting update event')
+      self.vim_sockets:emmit('update presence', presence)
+    end
+  elseif Discord.tried_connection then
+    Discord:set_activity(presence)
+  end
 end
 
 function NekoVim:shutdown()
-  Discord:disconnect()
+  if #self.vim_sockets.sockets > 0 then
+    local next_socket = self.vim_sockets.sockets[0]
+
+    if Discord.tried_connection then
+      self.vim_sockets:emmit_to(next_socket, 'make connection')
+    end
+
+    self.vim_sockets:emmit_to(next_socket, 'update presence')
+  end
+
+  self.vim_sockets:unregister_self()
 end
 
 return NekoVim
