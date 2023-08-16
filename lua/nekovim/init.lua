@@ -111,11 +111,6 @@ function NekoVim:make_presence()
     end
   end
 
-  vim.schedule(function()
-    local body = vim.fn.json_encode(presence)
-    print(body)
-  end)
-
   return presence
 end
 
