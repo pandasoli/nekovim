@@ -22,22 +22,22 @@ local NekoVim = {}
 function NekoVim:setup(makers)
   self.logger = Logger
   self.presence_makers = JoinTables(DefaultMakers, makers)
-  self.presence_props = {}
-  self.presence_props.startTimestamp = os.time()
+  self.presence_props = { startTimestamp = os.time() }
+  self.vim_sockets = VimSockets
 
-  self.vim_sockets = VimSockets.new('package.loaded.nekovim.vim_sockets', Logger)
+  VimSockets:setup('package.loaded.nekovim.vim_sockets', Logger)
 
-  self.vim_sockets:on('update presence', function(props)
+  VimSockets:on('update presence', function(props)
     Logger:debug('NekoVim:on update presence', 'Received presence:', props.data ~= nil)
     self:update(props.data)
   end)
 
-  self.vim_sockets:on('make connection', function(props)
+  VimSockets:on('make connection', function(props)
     Logger:debug('NekoVim:on make connection', 'Received from', props.socket_emmiter)
     self:connect()
   end)
 
-  if #self.vim_sockets.sockets == 0 then
+  if #VimSockets.sockets == 0 then
     self:connect()
   end
 
@@ -155,17 +155,15 @@ function NekoVim:update(presence)
 end
 
 function NekoVim:shutdown()
-  if #self.vim_sockets.sockets > 0 then
-    local next_socket = self.vim_sockets.sockets[0]
+  if #VimSockets.sockets > 0 then
+    local next_socket = VimSockets.sockets[1]
 
     if Discord.tried_connection then
-      self.vim_sockets:emmit_to(next_socket, 'make connection')
+      VimSockets:emmit_to(next_socket, 'make connection')
     end
 
-    self.vim_sockets:emmit_to(next_socket, 'update presence')
+    VimSockets:emmit_to(next_socket, 'update presence')
   end
-
-  self.vim_sockets:unregister_self()
 end
 
 return NekoVim
