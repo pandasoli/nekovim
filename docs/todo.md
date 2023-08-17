@@ -12,8 +12,3 @@
 <br/><br/>
 
 ### Core
-
-- [ ] Vim looks to be exiting before finishing `NekoVim:shutdown`
-- [ ] Connection and disconnection look very also after using _vim-socket_
-
-  Even if there are no other instances running.
