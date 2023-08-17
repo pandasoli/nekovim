@@ -1,2 +1,5 @@
 ---@class Logger
----@field log fun(self: Logger, from: string, ...: any)
+---@field debug fun(self: Logger, from: string, ...: any)
+---@field info fun(self: Logger, from: string, ...: any)
+---@field warn fun(self: Logger, from: string, ...: any)
+---@field error fun(self: Logger, from: string, ...: any)

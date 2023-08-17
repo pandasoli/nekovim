@@ -28,12 +28,12 @@ function NekoVim:setup(makers)
   self.vim_sockets = VimSockets.new('package.loaded.nekovim.vim_sockets', Logger)
 
   self.vim_sockets:on('update presence', function(props)
-    Logger:log('NekoVim:on update presence', 'Received presence:', props.data ~= nil)
+    Logger:debug('NekoVim:on update presence', 'Received presence:', props.data ~= nil)
     self:update(props.data)
   end)
 
   self.vim_sockets:on('make connection', function(props)
-    Logger:log('NekoVim:on make connection', 'Received from', props.socket_emmiter)
+    Logger:debug('NekoVim:on make connection', 'Received from', props.socket_emmiter)
     self:connect()
   end)
 
@@ -50,12 +50,12 @@ end
 function NekoVim:connect()
   local makers = self.presence_makers
   if type(makers) ~= 'table' then
-    return Logger:log('NekoVim:connect', "Could not get cliend_id; Presence Makers are not a table")
+    return Logger:error('NekoVim:connect', "Could not get cliend_id; Presence Makers are not a table")
   end
 
   local client_id = Maker_tostring(makers.client_id, self)
   if type(client_id) ~= 'string' then
-    return Logger:log('NekoVim:connect', "cliend_id is not a string")
+    return Logger:error('NekoVim:connect', "cliend_id is not a string")
   end
 
   Discord:setup(client_id, Logger)
@@ -143,10 +143,10 @@ function NekoVim:update(presence)
     if not presence then return end
 
     if Discord.tried_connection then
-      Logger:log('NekoVim:update', 'Setting presence')
+      Logger:debug('NekoVim:update', 'Setting presence')
       Discord:set_activity(presence)
     else
-      Logger:log('NekoVim:update', 'Emitting update event')
+      Logger:debug('NekoVim:update', 'Emitting update event')
       self.vim_sockets:emmit('update presence', presence)
     end
   elseif Discord.tried_connection then

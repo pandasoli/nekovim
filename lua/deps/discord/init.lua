@@ -49,21 +49,21 @@ function Discord:test_sockets(callback)
   for i, socket in ipairs(sockets) do
     if self.pipe then break end
 
-    self.logger:log('Discord:test_sockets', 'Trying connection with socket', tostring(i)..'/'..tostring(sockets_len))
+    self.logger:debug('Discord:test_sockets', 'Trying connection with socket', tostring(i)..'/'..tostring(sockets_len))
     pipe:connect(socket, function(err)
       if err then
         pipe:close()
         tried_connections = tried_connections + 1
 
         if tried_connections == sockets_len then
-          self.logger:log('Discord:test_sockets', 'Could not connect to any socket ('..tostring(sockets_len)..')')
+          self.logger:error('Discord:test_sockets', 'Could not connect to any socket ('..tostring(sockets_len)..')')
         end
       else
         self.pipe = pipe
         self.socket = socket
         if callback then callback(self) end
 
-        self.logger:log('Discord:test_sockets', 'Successful connection with', socket)
+        self.logger:info('Discord:test_sockets', 'Successful connection with', socket)
       end
     end)
   end
@@ -98,7 +98,7 @@ end
 ---@param callback? fun(response: string?, err_name: string?, err_msg: string?)
 function Discord:set_activity(activity, callback)
   if not self.pipe or not self.pipe:is_active() then
-    self.logger:log('Discord:set_activity', 'adding to wait')
+    self.logger:debug('Discord:set_activity', 'adding to wait')
     self.waiting_activity = { activity = activity, callback = callback }
   else
     local payload = {
@@ -110,7 +110,7 @@ function Discord:set_activity(activity, callback)
       }
     }
 
-    self.logger:log('Discord:set_activity', 'calling')
+    self.logger:debug('Discord:set_activity', 'calling')
     self:call(1, payload, callback)
   end
 end

@@ -62,12 +62,12 @@ end
 ---@param event string
 ---@param data any
 function Sockets:emmit(event, data)
-  self.logger:log('emmit', 'Emmiting event', event, 'to', #self.sockets, 'sockets')
+  self.logger:debug('emmit', 'Emmiting event', event, 'to', #self.sockets, 'sockets')
 
   for _, socket in ipairs(self.sockets) do
     self:emmit_to(socket, event, data, function(err)
       if err then
-        self.logger:log('emmit', 'Error emmiting to', socket .. ':', err)
+        self.logger:error('emmit', 'Error emmiting to', socket .. ':', err)
       end
     end)
   end
@@ -84,7 +84,7 @@ function Sockets:emmit_to(socket, event, data, callback)
     data = data
   }
 
-  self.logger:log('emmit_to', 'Emmiting event', event, 'to socket', socket)
+  self.logger:debug('emmit_to', 'Emmiting event', event, 'to socket', socket)
   self:call_remote_method(socket, 'receive_data', { props }, callback)
 end
 
@@ -98,7 +98,7 @@ end
 function Sockets:register_self()
   self.sockets = self.get_socket_paths()
 
-  self.logger:log('register_self', 'Registered self for', #self.sockets - 1, 'sockets')
+  self.logger:debug('register_self', 'Registered self for', #self.sockets - 1, 'sockets')
 
   for i, socket in ipairs(self.sockets) do
     if socket == self.socket then
@@ -107,20 +107,20 @@ function Sockets:register_self()
       local err = self:call_remote_method(socket, 'register_socket', { self.socket })
 
       if err then
-        self.logger:log('register_self', 'Error registering for', socket .. ':', err)
+        self.logger:error('register_self', 'Error registering for', socket .. ':', err)
       end
     end
   end
 end
 
 function Sockets:unregister_self()
-  self.logger:log('unregister_self', 'Unregistering self for', #self.sockets, 'sockets')
+  self.logger:debug('unregister_self', 'Unregistering self for', #self.sockets, 'sockets')
 
   for _, socket in ipairs(self.sockets) do
     local err = self:call_remote_method(socket, 'unregister_socket', { self.socket })
 
     if err then
-      self.logger:log('unregister_self', 'Error unregistering for socket', socket .. ':', err)
+      self.logger:error('unregister_self', 'Error unregistering for socket', socket .. ':', err)
     end
   end
 end
@@ -183,21 +183,21 @@ end
 ---@private
 ---@param socket string
 function Sockets:register_socket(socket)
-  self.logger:log('register_socket', 'Registering socket', socket)
+  self.logger:info('register_socket', 'Registering socket', socket)
   table.insert(self.sockets, socket)
 end
 
 ---@private
 ---@param socket string
 function Sockets:unregister_socket(socket)
-  self.logger:log('unregister_socket', 'Unregistering socket', socket)
+  self.logger:info('unregister_socket', 'Unregistering socket', socket)
   self.sockets[socket] = nil
 end
 
 ---@private
 ---@param props ReceiverProps
 function Sockets:receive_data(props)
-  self.logger:log('receive_data', 'Receiving event', props.event, 'from', props.socket_emmiter)
+  self.logger:info('receive_data', 'Receiving event', props.event, 'from', props.socket_emmiter)
 
   local fn = self.receivers[props.event]
 
