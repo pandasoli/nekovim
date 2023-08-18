@@ -169,6 +169,10 @@ local NekoVim = {}
 Everything start from `:setup(makers: PresenceMakers)`.  
 It initializes every dependency and property.
 
+> It combines [default](./lua/default_makers/init.lua) and received _Presence Makers_.
+
+<br/>
+
 <details>
   <summary>About <code>self.vim_sockets</code></summary>
   <br/>
