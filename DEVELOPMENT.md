@@ -6,10 +6,8 @@
 
   Please read with the code of the last commit of this file.
 
-  [**Pre-requisites**](#pre-requisites-)  
-  [**Setting up environment**](#-setting-up-environment) | [**Taken decisions**](#taken-decisions-)  
-  [**Structure**](#-structure) | [**Logs**](#logs-)  
-  [**Generic files**](#-generic-files) | [**Events**](#events-) | [**Core**](#-core)
+  [**Pre-requisites**](#pre-requisites-) | [**Setting up environment**](#-setting-up-environment) | [**Taken decisions**](#taken-decisions-)  
+  [**Structure**](#-structure) | [**Logs**](#logs-) | [**Generic files**](#-generic-files) | [**Events**](#events-) | [**Core**](#-core)
 </div>
 <br/>
 <br/>
