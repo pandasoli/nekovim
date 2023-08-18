@@ -24,8 +24,8 @@
 - Multiple instances
 - Really highly configurable
 
-  > The only thing you cannot change is the title “NekoVim” (Discord bot name).  
-  > But you can change the used bot.
+  > The only thing you "cannot change" is the text “Playing **Neovim**”.  
+  > Actually, you can! But it would require changing the Discord bot (ez).
 
 <br/>
 <br/>
