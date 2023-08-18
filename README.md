@@ -63,10 +63,9 @@ More info about **Presence Makers** in [Presence Table](./docs/presence_table.md
   ## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f9d1-200d-1f4bb.svg'/> Development
 </div>
 
-A doc of developers will be released soon.
+Before creating a pull request, read the [docs for developers](./DEVELOPMENT.md) <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2615.svg'/>.
 
 <br/>
-<!-- Before creating a pull request, read the [docs for developers](./DEVELOPMENT.md) <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2615.svg'/>. -->
 
 I didn't know anything about creation of plugins before having troubles with other rich presence plugins.  
 A lot of code from [andweeb/presence.nvim](https://github.com/andweeb/presence.nvim) was used, so I would like to thanks them.
