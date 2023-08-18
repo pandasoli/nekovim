@@ -247,3 +247,24 @@ else:
 If there is any other instance, we emit the events `make connection`,
 and `update presence` without pass any value,
 it will make the instance think `:update` was called by it itself and update with its own _Presence Table_.
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<div align='center'>
+
+  # Journey Ended
+</div>
+<br/>
+
+You probably started reading this doc thinking about helping me in this project <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f9f8.svg'/>.  
+I cannot give you money <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4b0.svg'/> or anything for your time, but if you still want to help, I would be very happy!
+
+I probably have some [tasks](./docs/todo.md) to be done yet.  
+But that's it. This is just one more non-profit project made for devs.
+
+I don't have a server on **Discord** <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f47e.svg'/> focused on this project,  
+but you can talk to me there if you wish so (see my profile).

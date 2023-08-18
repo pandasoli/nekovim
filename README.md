@@ -63,7 +63,8 @@ More info about **Presence Makers** in [Presence Table](./docs/presence_table.md
   ## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f9d1-200d-1f4bb.svg'/> Development
 </div>
 
-Before creating a pull request, read the [docs for developers](./DEVELOPMENT.md) <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2615.svg'/>.
+Before creating a pull request, read the [docs for developers](./DEVELOPMENT.md) <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2615.svg'/>.  
+We have also [some tasks to be done](./docs/todo.md) if you would like to help <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f389.svg'/>.
 
 <br/>
 
