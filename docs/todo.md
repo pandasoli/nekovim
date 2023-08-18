@@ -10,6 +10,7 @@
 - [ ] Get `repoName` with **Git** in `Nekovim:make_buf_props`
 - [ ] Try implementing AFK status
 - [ ] Add option to disable Vim events
+- [ ] Add option to disable multiple instances
 - [ ] Maybe: Double connection  
   If you edit the plugin's config while it's running,  
   and ther's no other instances runnings,  
@@ -23,6 +24,7 @@
   end
   ```
 
-<br/><br/>
+<br/>
+<br/>
 
 ### Core
