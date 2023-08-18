@@ -63,7 +63,7 @@ I maintain one connected instance; others emit the [_Presence Table_](./docs/pre
 <br/>
 <div align='right'>
 
-  ## Structure <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f334.svg'/>
+  ## <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f334.svg'/> Structure
 </div>
 
 - **lua**
@@ -148,7 +148,7 @@ function EventHandlers:setup(nekovim, log_to_file) end
 <br/>
 <div align='right'>
 
-  ## Core <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/26a0.svg'/>
+  ## <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/26a0.svg'/> Core
 </div>
 
 ```lua
