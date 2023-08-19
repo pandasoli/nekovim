@@ -157,9 +157,6 @@ end
 
 ---@param presence? Presence
 function NekoVim:update(presence)
-  -- I didn't change here for disabled multiple instances.
-  -- This is never going to receive `presence` and a connection was tried.
-
   if not presence then
     presence = self:make_presence()
     if not presence then return end
@@ -167,7 +164,7 @@ function NekoVim:update(presence)
     if Discord.tried_connection then
       Logger:debug('NekoVim:update', 'Setting presence')
       Discord:set_activity(presence)
-    else
+    elseif self.work_props.multiple then
       Logger:debug('NekoVim:update', 'Emitting update event')
       self.vim_sockets:emmit('update presence', presence)
     end
