@@ -5,10 +5,10 @@ function Maker_tostring(maker, self)
   if type(maker) == 'function' then
     local res = maker(self)
 
-    if type(res) == 'string' then
+    if type(res) == 'string' and #res > 0 then
       return res
     end
-  elseif type(maker) == 'string' then
+  elseif type(maker) == 'string' and #maker > 0 then
     return maker
   end
 end
@@ -20,10 +20,10 @@ function Maker_tonumber(maker, self)
   if type(maker) == 'function' then
     local res = maker(self)
 
-    if type(res) == 'number' then
+    if type(res) == 'number' and res ~= 0 then
       return res
     end
-  elseif type(maker) == 'number' then
+  elseif type(maker) == 'number' and maker ~= 0 then
     return maker
   end
 end
@@ -50,10 +50,10 @@ function Maker_totable(maker, self)
   if type(maker) == 'function' then
     local res = maker(self)
 
-    if type(res) == 'table' then
+    if type(res) == 'table' and #res > 0 then
       return res
     end
-  elseif type(maker) == 'table' then
+  elseif type(maker) == 'table' and #maker > 0 then
     return maker
   end
 end
