@@ -11,8 +11,6 @@ function Maker_tostring(maker, self)
   elseif type(maker) == 'string' then
     return maker
   end
-
-  return nil
 end
 
 ---@param self NekoVim
@@ -28,8 +26,21 @@ function Maker_tonumber(maker, self)
   elseif type(maker) == 'number' then
     return maker
   end
+end
 
-  return nil
+---@param self NekoVim
+---@param maker (fun(self: NekoVim) : boolean)|boolean
+---@return boolean?
+function Maker_toboolean(maker, self)
+  if type(maker) == 'function' then
+    local res = maker(self)
+
+    if type(res) == 'boolean' then
+      return res
+    end
+  elseif type(maker) == 'boolean' then
+    return maker
+  end
 end
 
 ---@param self NekoVim
@@ -45,6 +56,4 @@ function Maker_totable(maker, self)
   elseif type(maker) == 'table' then
     return maker
   end
-
-  return nil
 end

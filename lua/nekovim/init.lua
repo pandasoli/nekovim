@@ -15,6 +15,7 @@ local Discord = require 'deps.discord'
 ---@field presence_props  PresenceProps
 ---@field buffer_props    BufferProps
 ---@field vim_sockets     VimSockets
+---@field multiple        boolean        # Multiple instances
 ---@field logger Logger
 local NekoVim = {}
 
@@ -24,20 +25,25 @@ function NekoVim:setup(makers)
   self.presence_makers = JoinTables(DefaultMakers, makers)
   self.presence_props = { startTimestamp = os.time() }
   self.vim_sockets = VimSockets
+  self.multiple = Maker_toboolean(self.presence_makers.multiple, self) or false
 
-  VimSockets:setup('package.loaded.nekovim.vim_sockets', Logger)
+  if self.multiple then
+    VimSockets:setup('package.loaded.nekovim.vim_sockets', Logger)
 
-  VimSockets:on('update presence', function(props)
-    Logger:debug('NekoVim:on update presence', 'Received presence:', props.data ~= nil)
-    self:update(props.data)
-  end)
+    VimSockets:on('update presence', function(props)
+      Logger:debug('NekoVim:on update presence', 'Received presence:', props.data ~= nil)
+      self:update(props.data)
+    end)
 
-  VimSockets:on('make connection', function(props)
-    Logger:debug('NekoVim:on make connection', 'Received from', props.socket_emmiter)
-    self:connect()
-  end)
+    VimSockets:on('make connection', function(props)
+      Logger:debug('NekoVim:on make connection', 'Received from', props.socket_emmiter)
+      self:connect()
+    end)
 
-  if #VimSockets.sockets == 0 then
+    if #VimSockets.sockets == 0 then
+      self:connect()
+    end
+  else
     self:connect()
   end
 
@@ -138,6 +144,9 @@ end
 
 ---@param presence? Presence
 function NekoVim:update(presence)
+  -- I didn't change here for disabled multiple instances.
+  -- This is never going to receive `presence` and a connection was tried.
+
   if not presence then
     presence = self:make_presence()
     if not presence then return end
@@ -155,14 +164,16 @@ function NekoVim:update(presence)
 end
 
 function NekoVim:shutdown()
-  if #VimSockets.sockets > 0 then
-    local next_socket = VimSockets.sockets[1]
+  if self.multiple then
+    if #VimSockets.sockets > 0 then
+      local next_socket = VimSockets.sockets[1]
 
-    if Discord.tried_connection then
-      VimSockets:emmit_to(next_socket, 'make connection')
+      if Discord.tried_connection then
+        VimSockets:emmit_to(next_socket, 'make connection')
+      end
+
+      VimSockets:emmit_to(next_socket, 'update presence')
     end
-
-    VimSockets:emmit_to(next_socket, 'update presence')
   end
 end
 

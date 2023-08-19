@@ -4,6 +4,7 @@ local assets = require 'default_makers.assets'
 ---@type PresenceMakers
 local makers = {
   client_id = '1059272441194623126',
+  multiple = true,
 
   timestamps = {
     start = function(self)
