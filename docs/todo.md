@@ -10,19 +10,6 @@
 - [ ] Get `repoName` with **Git** in `Nekovim:make_buf_props`
 - [ ] Try implementing AFK status
 - [ ] Add option to disable Vim events
-- [ ] Fix unempty keys  
-  ```lua
-  require 'nekovim':setup {
-    assets = {
-      small_image = nil
-    }
-  }
-  ```
-  > <small>Trying to do not show <code>small_image</code>.</small>
-
-  The code above identifies `assets` as an empty table, what later the function `JoinTables` will identify as an array and overwrite the default makers for assets.
-
-  Maybe an empty string would be a nice sign for empty, then the function `Maker_tostring` could convert it to `nil`.
 - [ ] Maybe: Double connection  
   If you edit the plugin's config while it's running,  
   and ther's no other instances runnings,  
