@@ -166,7 +166,7 @@ function NekoVim:update(presence)
       Discord:set_activity(presence)
     elseif self.work_props.multiple then
       Logger:debug('NekoVim:update', 'Emitting update event')
-      self.vim_sockets:emmit('update presence', presence)
+      self.vim_sockets:emit('update presence', presence)
     end
   elseif Discord.tried_connection then
     Discord:set_activity(presence)
@@ -179,10 +179,10 @@ function NekoVim:shutdown()
       local next_socket = VimSockets.sockets[1]
 
       if Discord.tried_connection then
-        VimSockets:emmit_to(next_socket, 'make connection')
+        VimSockets:emit_to(next_socket, 'make connection')
       end
 
-      VimSockets:emmit_to(next_socket, 'update presence')
+      VimSockets:emit_to(next_socket, 'update presence')
     end
   end
 end

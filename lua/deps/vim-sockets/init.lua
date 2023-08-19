@@ -61,11 +61,11 @@ end
 
 ---@param event string
 ---@param data any
-function Sockets:emmit(event, data)
+function Sockets:emit(event, data)
   self.logger:debug('emmit', 'Emmiting event', event, 'to', #self.sockets, 'sockets')
 
   for _, socket in ipairs(self.sockets) do
-    self:emmit_to(socket, event, data, function(err)
+    self:emit_to(socket, event, data, function(err)
       if err then
         self.logger:error('emmit', 'Error emmiting to', socket .. ':', err)
       end
@@ -77,7 +77,7 @@ end
 ---@param event string
 ---@param data any
 ---@param callback? fun(err: string?)
-function Sockets:emmit_to(socket, event, data, callback)
+function Sockets:emit_to(socket, event, data, callback)
   local props = {
     socket_emmiter = self.socket,
     event = event,
