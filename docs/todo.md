@@ -10,18 +10,6 @@
 - [ ] Get `repoName` with **Git** in `Nekovim:make_buf_props`
 - [ ] Try implementing AFK status
 - [ ] Add option to disable Vim events
-- [ ] Maybe: Double connection  
-  If you edit the plugin's config while it's running,  
-  and ther's no other instances runnings,  
-  it will try to connect to **Discord** again.
-
-  So a check `Discord.tried_connection` is needed.
-
-  ```lua
-  if #VimSockets.sockets == 0 then
-    self:connect()
-  end
-  ```
 
 <br/>
 <br/>
