@@ -1,4 +1,4 @@
-require 'lib.str_utils'
+require 'utils.str_utils'
 
 ScriptPath = debug.getinfo(1, 'S').source:sub(2)
 package.path = package.path .. ';' .. ScriptPath:match '(.*)/.*/' .. '/deps/?.lua'
