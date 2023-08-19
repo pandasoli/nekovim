@@ -9,7 +9,6 @@
 
 - [ ] Get `repoName` with **Git** in `Nekovim:make_buf_props`
 - [ ] Try implementing AFK status
-- [ ] Add option to disable Vim events
 
 <br/>
 <br/>

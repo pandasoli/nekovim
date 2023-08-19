@@ -49,7 +49,12 @@ function NekoVim:setup(makers, work_props)
     self:connect()
   end
 
-  EventHandlers:setup(self, false)
+  if self.work_props.events then
+    EventHandlers:setup(self, false)
+  else
+    self:make_buf_props()
+    self:update()
+  end
 
   VimUtils.CreateUserCommand('PrintNekoLogs', 'lua package.loaded.nekovim.logger:print()', { nargs = 0 })
   VimUtils.SetVar('loaded_nekovim', 1)
@@ -153,6 +158,7 @@ function NekoVim:make_work_props(makers)
 
   props.client_id = Maker_tostring(makers.client_id, self)
   props.multiple  = Maker_toboolean(makers.multiple, self)
+  props.events    = Maker_toboolean(makers.events, self)
 
   return props
 end

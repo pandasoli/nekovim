@@ -76,7 +76,8 @@ local makers = {
 ---@type WorkPropsMakers
 local props = {
   client_id = '1059272441194623126',
-  multiple = true
+  multiple = true,
+  events = true
 }
 
 return {
