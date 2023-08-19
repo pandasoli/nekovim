@@ -1,7 +1,7 @@
 require 'nekovim.std'
 require 'utils.maker_to'
 
-local DefaultMakers = require 'default_makers'
+local DefaultConfig = require 'default_makers'
 local EventHandlers = require 'nekovim.event_handlers'
 local VimUtils = require 'nekovim.vim_utils'
 local Logger = require 'lib.log'
@@ -14,20 +14,22 @@ local Discord = require 'deps.discord'
 ---@field presence_makers PresenceMakers
 ---@field presence_props  PresenceProps
 ---@field buffer_props    BufferProps
----@field vim_sockets     VimSockets
----@field multiple        boolean        # Multiple instances
+---@field work_props      WorkProps
+---@field vim_sockets?    VimSockets
 ---@field logger Logger
 local NekoVim = {}
 
----@param makers PresenceMakers
-function NekoVim:setup(makers)
+---@param makers     PresenceMakers
+---@param work_props WorkPropsMakers
+function NekoVim:setup(makers, work_props)
   self.logger = Logger
-  self.presence_makers = JoinTables(DefaultMakers, makers)
+  self.presence_makers = JoinTables(DefaultConfig.makers, makers)
   self.presence_props = { startTimestamp = os.time() }
-  self.vim_sockets = VimSockets
-  self.multiple = Maker_toboolean(self.presence_makers.multiple, self) or false
+  self.work_props = self:make_work_props(JoinTables(DefaultConfig.props, work_props))
 
-  if self.multiple then
+  if self.work_props.multiple then
+    self.vim_sockets = VimSockets
+
     VimSockets:setup('package.loaded.nekovim.vim_sockets', Logger)
 
     VimSockets:on('update presence', function(props)
@@ -54,14 +56,10 @@ function NekoVim:setup(makers)
 end
 
 function NekoVim:connect()
-  local makers = self.presence_makers
-  if type(makers) ~= 'table' then
-    return Logger:error('NekoVim:connect', "Could not get cliend_id; Presence Makers are not a table")
-  end
-
-  local client_id = Maker_tostring(makers.client_id, self)
-  if type(client_id) ~= 'string' then
-    return Logger:error('NekoVim:connect', "cliend_id is not a string")
+  local client_id = self.work_props.client_id
+  if not client_id then
+    Logger:error('NekoVim:connect', "cliend_id is not a string")
+    return
   end
 
   Discord:setup(client_id, Logger)
@@ -102,9 +100,10 @@ end
 
 ---@return Presence?
 function NekoVim:make_presence()
-  if type(self.presence_makers) ~= 'table' then return end
-
   local makers = self.presence_makers
+
+  if type(makers) ~= 'table' then return end
+
   ---@type Presence
   local presence = {}
 
@@ -140,6 +139,20 @@ function NekoVim:make_presence()
   return presence
 end
 
+---@param makers WorkPropsMakers
+---@return WorkProps
+function NekoVim:make_work_props(makers)
+  ---@type WorkProps
+  local props = {}
+
+  if type(makers) ~= 'table' then return props end
+
+  props.client_id = Maker_tostring(makers.client_id, self)
+  props.multiple  = Maker_toboolean(makers.multiple, self)
+
+  return props
+end
+
 -- // Events // --
 
 ---@param presence? Presence
@@ -164,7 +177,7 @@ function NekoVim:update(presence)
 end
 
 function NekoVim:shutdown()
-  if self.multiple then
+  if self.work_props.multiple then
     if #VimSockets.sockets > 0 then
       local next_socket = VimSockets.sockets[1]
 

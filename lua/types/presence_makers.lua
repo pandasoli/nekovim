@@ -9,9 +9,6 @@
 ---@field end?   (fun(self: NekoVim): integer)|integer
 
 ---@class PresenceMakers : Presence
----@field client_id   (fun(self: NekoVim): string)|string
----@field multiple    (fun(self: NekoVim): boolean)|boolean                    # Multiple instances
----
 ---@field state?      (fun(self: NekoVim): string)|string
 ---@field details?    (fun(self: NekoVim): string)|string
 ---@field timestamps? PresenceMakersTimestamps
