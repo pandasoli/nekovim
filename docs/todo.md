@@ -7,7 +7,6 @@
 <br/>
 <br/>
 
-- [ ] Get `repoName` with **Git** in `Nekovim:make_buf_props`
 - [ ] Try implementing AFK status
 
 <br/>
