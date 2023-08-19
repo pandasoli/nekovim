@@ -130,7 +130,11 @@ function NekoVim:make_presence()
     presence.buttons = {}
 
     for _, maker in ipairs(makers.buttons) do
-      table.insert(presence.buttons, Maker_totable(maker, self))
+      local res = Maker_totable(maker, self)
+
+      if res then
+        table.insert(presence.buttons, res)
+      end
     end
 
     presence.buttons = #presence.buttons > 0 and presence.buttons or nil
