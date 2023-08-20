@@ -16,16 +16,18 @@ local Discord = require 'deps.discord'
 ---@field buffer_props    BufferProps
 ---@field work_props      WorkProps
 ---@field vim_sockets?    VimSockets
----@field logger Logger
+---@field idle_timer?     number
+---@field logger          Logger
 local NekoVim = {}
 
 ---@param makers     PresenceMakers
 ---@param work_props WorkPropsMakers
 function NekoVim:setup(makers, work_props)
-  self.logger = Logger
   self.presence_makers = JoinTables(DefaultConfig.makers, makers)
-  self.presence_props = { startTimestamp = os.time() }
+  self.presence_props = { startTimestamp = os.time(), idling = false }
   self.work_props = self:make_work_props(JoinTables(DefaultConfig.props, work_props))
+  self.idle_timer = -1
+  self.logger = Logger
 
   if self.work_props.multiple then
     self.vim_sockets = VimSockets
@@ -51,6 +53,7 @@ function NekoVim:setup(makers, work_props)
 
   if self.work_props.events then
     EventHandlers:setup(self, false)
+    self:restart_idle_timer()
   else
     self:make_buf_props()
     self:update()
@@ -68,6 +71,21 @@ function NekoVim:connect()
   end
 
   Discord:setup(client_id, Logger)
+end
+
+function NekoVim:restart_idle_timer()
+  self.presence_props.idling = false
+  self:make_buf_props()
+  self:update()
+
+  if self.idle_timer ~= -1 then
+    vim.fn.timer_stop(self.idle_timer)
+  end
+
+  self.idle_timer = vim.fn.timer_start(2 * 1000, function()
+    self.presence_props.idling = true
+    self:update()
+  end)
 end
 
 -- // Data Makers // --

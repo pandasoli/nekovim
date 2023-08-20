@@ -11,6 +11,10 @@ local makers = {
 
   assets = {
     large_image = function(self)
+      if self.presence_props.idling then
+        return 'keyboard'
+      end
+
       local props = self.buffer_props
       local asset = assets:test(props.filePath, props.fileType)
       return asset.key
@@ -20,7 +24,13 @@ local makers = {
       local asset = assets:test(props.filePath, props.fileType)
       return 'Editing ' .. asset.name .. ' file'
     end,
-    small_image = 'lunarvim',
+    small_image = function(self)
+      if self.presence_props.idling then
+        return 'idle'
+      end
+
+      return'lunarvim'
+    end,
     small_text = 'LunarVim'
   },
 

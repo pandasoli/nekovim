@@ -7,8 +7,6 @@
 <br/>
 <br/>
 
-- [ ] Try implementing AFK status
-
 <br/>
 <br/>
 
