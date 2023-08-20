@@ -5,97 +5,84 @@ require 'vim-sockets.std'
 
 
 ---@class ReceiverProps
----@field event string
----@field socket_emmiter string
----@field data any
+---@field event   string
+---@field emitter string
+---@field data    any
 
 ---@class VimSockets
----@field socket string
----@field instance_path string
----@field logger Logger
----@field sockets string[]
+---@field socket    string
+---@field dep_path  string
+---@field sockets   string[]
 ---@field receivers table<string, fun(props: ReceiverProps)>
-local Sockets = {
-  socket = vim.v.servername,
-  instance_path = '',
-  logger = {
-    log = function()end
-  },
-  sockets = {},
-  receivers = {}
-}
-Sockets.__index = Sockets
+---@field logger Logger
+local VimSockets = {}
 
----@param instance_path string
----@param logger Logger
+---@param dep_path    string # package.loaded...
+---@param logger      Logger
 ---@param vim_events? boolean
-function Sockets:setup(instance_path, logger, vim_events)
-  self.instance_path = instance_path
+function VimSockets:setup(dep_path, logger, vim_events)
+  self.socket = vim.v.servername
+  self.dep_path = dep_path or ''
   self.logger = logger
+  self.sockets = {}
+  self.receivers = {}
+
+  self:register_self()
 
   if vim_events then
     vim.api.nvim_create_user_command('PrintSockets', function() self:print_sockets() end, { nargs = 0 })
     vim.api.nvim_create_user_command('PrintLogs', function() self.logger:print() end, { nargs = 0 })
   end
 
-  vim.api.nvim_create_autocmd('ExitPre', {
+  vim.api.nvim_create_autocmd('VimLeavePre', {
     callback = function() self:unregister_self() end
   })
-
-  self:register_self()
 end
 
----@param instance_path string
----@param logger Logger
----@param vim_events? boolean
-function Sockets.new(instance_path, logger, vim_events)
-  local instance = setmetatable({}, Sockets)
-  instance:setup(instance_path, logger, vim_events)
-
-  return instance
-end
-
-function Sockets:print_sockets()
+function VimSockets:print_sockets()
   print(vim.fn.json_encode(self.sockets))
 end
 
----@param event string
----@param data any
-function Sockets:emit(event, data)
-  self.logger:debug('emmit', 'Emmiting event', event, 'to', #self.sockets, 'sockets')
+---@param event     string
+---@param data      any
+---@param callback? fun(err: string|nil)
+function VimSockets:emit(event, data, callback)
+  self.logger:debug('emit', 'Emitting event', event, 'to', #self.sockets, 'sockets')
 
   for _, socket in ipairs(self.sockets) do
-    self:emit_to(socket, event, data, function(err)
-      if err then
-        self.logger:error('emmit', 'Error emmiting to', socket .. ':', err)
-      end
-    end)
+    self:emit_to(socket, event, data, callback)
   end
 end
 
----@param socket string
----@param event string
----@param data any
----@param callback? fun(err: string?)
-function Sockets:emit_to(socket, event, data, callback)
+---@param socket    string
+---@param event     string
+---@param data      any
+---@param callback? fun(err: string|nil)
+function VimSockets:emit_to(socket, event, data, callback)
+  ---@type ReceiverProps
   local props = {
-    socket_emmiter = self.socket,
+    emitter = self.socket,
     event = event,
     data = data
   }
 
-  self.logger:debug('emmit_to', 'Emmiting event', event, 'to socket', socket)
-  self:call_remote_method(socket, 'receive_data', { props }, callback)
+  self:call_remote_method(socket, 'receive_data', { props }, function(err)
+    if err then
+      self.logger:error('emit_to', 'Error emitting to', socket .. ':', err)
+    end
+
+    if callback then callback(err) end
+  end)
 end
 
 ---@param event string
----@param fn fun(props: ReceiverProps)
-function Sockets:on(event, fn)
+---@param fn    fun(props: ReceiverProps)
+function VimSockets:on(event, fn)
   self.receivers[event] = fn
 end
 
 ---@private
-function Sockets:register_self()
+function VimSockets:register_self()
   self.sockets = self.get_socket_paths()
 
   self.logger:debug('register_self', 'Registered self for', #self.sockets - 1, 'sockets')
@@ -104,70 +91,58 @@ function Sockets:register_self()
     if socket == self.socket then
       self.sockets[i] = nil
     else
-      local err = self:call_remote_method(socket, 'register_socket', { self.socket })
-
-      if err then
-        self.logger:error('register_self', 'Error registering for', socket .. ':', err)
-      end
+      self:call_remote_method(socket, 'register_socket', { self.socket }, function(err)
+        if err then
+          self.logger:error('register_self', 'Error registering for', socket .. ':', err)
+        end
+      end)
     end
   end
 end
 
-function Sockets:unregister_self()
+function VimSockets:unregister_self()
   self.logger:debug('unregister_self', 'Unregistering self for', #self.sockets, 'sockets')
 
   for _, socket in ipairs(self.sockets) do
-    local err = self:call_remote_method(socket, 'unregister_socket', { self.socket })
-
-    if err then
-      self.logger:error('unregister_self', 'Error unregistering for socket', socket .. ':', err)
-    end
+    self:call_remote_method(socket, 'unregister_socket', { self.socket }, function(err)
+      if err then
+        self.logger:error('unregister_self', 'Error unregistering for socket', socket .. ':', err)
+      end
+    end)
   end
 end
 
 ---@private
 ---@return string[]
-function Sockets.get_socket_paths()
-  local function handle(lines)
-    local sockets = {}
+function VimSockets.get_socket_paths()
+  local cmd = "ss -lx | grep -o '[^[:space:]]*vim[^[:space:]]*'"
 
-    for i = 1, #lines do
-      local socket = lines[i]:match '%s(/.-)%s'
-
-      if socket then
-        table.insert(sockets, socket)
-      end
-    end
-
-    return sockets
-  end
-
-  local f = assert(io.popen('ss -lx | grep vim'))
-  local data = f:read('*a')
+  local f = assert(io.popen(cmd))
+  local data = assert(f:read('*a'))
   f:close()
 
-  return handle(data:split '\n')
+  return data:split '\n'
 end
 
 ---@private
----@param socket string
----@param name string
----@param args any[]
----@param callback? fun(err: string?)
-function Sockets:call_remote_method(socket, name, args, callback)
+---@param socket    string
+---@param name      string
+---@param args      table
+---@param callback? fun(err: string|nil)
+function VimSockets:call_remote_method(socket, name, args, callback)
   local cmd_fmt = 'lua %s:%s(%s)'
 
   local arglist = ListToArgv(args)
-  local cmd = string.format(cmd_fmt, self.instance_path, name, arglist)
+  local cmd = string.format(cmd_fmt, self.dep_path, name, arglist)
 
-  self:call_remote_instance(socket, cmd, callback)
+  self:call_instance(socket, cmd, callback)
 end
 
 ---@private
----@param socket string
----@param cmd string
----@param callback? fun(err: string?)
-function Sockets:call_remote_instance(socket, cmd, callback)
+---@param socket    string
+---@param cmd       string
+---@param callback? fun(err: string|nil)
+function VimSockets:call_instance(socket, cmd, callback)
   local pipe = assert(vim.loop.new_pipe(true))
 
   pipe:connect(socket, function()
@@ -182,22 +157,22 @@ end
 
 ---@private
 ---@param socket string
-function Sockets:register_socket(socket)
+function VimSockets:register_socket(socket)
   self.logger:info('register_socket', 'Registering socket', socket)
   table.insert(self.sockets, socket)
 end
 
 ---@private
 ---@param socket string
-function Sockets:unregister_socket(socket)
+function VimSockets:unregister_socket(socket)
   self.logger:info('unregister_socket', 'Unregistering socket', socket)
   self.sockets[socket] = nil
 end
 
 ---@private
 ---@param props ReceiverProps
-function Sockets:receive_data(props)
-  self.logger:info('receive_data', 'Receiving event', props.event, 'from', props.socket_emmiter)
+function VimSockets:receive_data(props)
+  self.logger:info('receive_data', 'Receiving event', props.event, 'from', props.emitter)
 
   local fn = self.receivers[props.event]
 
@@ -206,4 +181,4 @@ function Sockets:receive_data(props)
   end
 end
 
-return Sockets
+return VimSockets

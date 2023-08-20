@@ -38,7 +38,7 @@ function NekoVim:setup(makers, work_props)
     end)
 
     VimSockets:on('make connection', function(props)
-      Logger:debug('NekoVim:on make connection', 'Received from', props.socket_emmiter)
+      Logger:debug('NekoVim:on make connection', 'Received from', props.emitter)
       self:connect()
     end)
 
@@ -68,7 +68,16 @@ function NekoVim:connect()
     return
   end
 
-  Discord:setup(client_id, Logger)
+  Discord:setup(client_id, Logger, function(res, opcode, err)
+    if err then
+      return Logger:error('NekoVim:connect', err)
+    end
+
+    vim.schedule(function()
+      res = type(res) == 'table' and vim.fn.json_encode(res) or res
+      Logger:error('NekoVim:conect', opcode, res)
+    end)
+  end)
 end
 
 function NekoVim:restart_idle_timer()
@@ -197,19 +206,32 @@ end
 
 ---@param presence? Presence
 function NekoVim:update(presence)
+  local function set_activity()
+    Discord:set_activity(presence, function(res, opcode, err)
+      if err then
+        return Logger:error('NekoVim:update', err)
+      end
+
+      vim.schedule(function()
+        res = type(res) == 'table' and vim.fn.json_encode(res) or res
+        Logger:info('NekoVim:update', opcode, res)
+      end)
+    end)
+  end
+
   if not presence then
     presence = self:make_presence()
     if not presence then return end
 
     if Discord.tried_connection then
       Logger:debug('NekoVim:update', 'Setting presence')
-      Discord:set_activity(presence)
+      set_activity()
     elseif self.work_props.multiple then
       Logger:debug('NekoVim:update', 'Emitting update event')
       self.vim_sockets:emit('update presence', presence)
     end
   elseif Discord.tried_connection then
-    Discord:set_activity(presence)
+    set_activity()
   end
 end
 

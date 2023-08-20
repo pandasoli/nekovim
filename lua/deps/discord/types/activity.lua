@@ -1,6 +1,6 @@
----@class PresenceButton
----@field label string
----@field url   string
+---@class PresenceTimestamps
+---@field start? integer
+---@field end? integer
 
 ---@class PresenceAssets
 ---@field large_image? string
@@ -8,9 +8,9 @@
 ---@field small_image? string
 ---@field small_text?  string
 
----@class PresenceTimestamps
----@field start? integer
----@field end?   integer
+---@class PresenceButton
+---@field label string
+---@field url   string
 
 ---@class Presence
 ---@field state?      string
