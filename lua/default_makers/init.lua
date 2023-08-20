@@ -20,6 +20,8 @@ local makers = {
       return asset.key
     end,
     large_text = function(self)
+      if self.presence_props.idling then return end
+
       local props = self.buffer_props
       local asset = assets:test(props.filePath, props.fileType)
       return 'Editing ' .. asset.name .. ' file'
@@ -31,14 +33,23 @@ local makers = {
 
       return'lunarvim'
     end,
-    small_text = 'LunarVim'
+    small_text = function(self)
+      if self.presence_props.idling then return end
+      return 'LunarVim'
+    end
   },
 
   state = function(self)
+    if self.presence_props.idling then return end
+
     return 'Working on ' .. self.buffer_props.repoName
   end,
 
   details = function(self)
+    if self.presence_props.idling then
+      return 'Sleeping on the keyboard...'
+    end
+
     local props = self.buffer_props
     local asset = assets:test(props.filePath, props.fileType)
 
