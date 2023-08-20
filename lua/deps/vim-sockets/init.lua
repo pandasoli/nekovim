@@ -1,7 +1,6 @@
 local msgpack = require 'vim-sockets.deps.msgpack'
 
 require 'vim-sockets.lib.list_to_argv'
-require 'vim-sockets.std'
 
 
 ---@class ReceiverProps
