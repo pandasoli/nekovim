@@ -45,7 +45,7 @@ function VimUtils.SetVar(name, value)
 end
 
 ---@param name string
----@param command string
+---@param command string|function
 ---@param opts? table<string, any>
 function VimUtils.CreateUserCommand(name, command, opts)
   vim.api.nvim_create_user_command(name, command, opts)

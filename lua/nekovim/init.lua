@@ -17,7 +17,6 @@ local Discord = require 'deps.discord'
 ---@field work_props      WorkProps
 ---@field vim_sockets?    VimSockets
 ---@field idle_timer?     number
----@field logger          Logger
 local NekoVim = {}
 
 ---@param makers     PresenceMakers
@@ -27,7 +26,6 @@ function NekoVim:setup(makers, work_props)
   self.presence_props = { startTimestamp = os.time(), idling = false }
   self.work_props = self:make_work_props(JoinTables(DefaultConfig.props, work_props))
   self.idle_timer = -1
-  self.logger = Logger
 
   if self.work_props.multiple then
     self.vim_sockets = VimSockets
@@ -59,7 +57,7 @@ function NekoVim:setup(makers, work_props)
     self:update()
   end
 
-  VimUtils.CreateUserCommand('PrintNekoLogs', 'lua package.loaded.nekovim.logger:print()', { nargs = 0 })
+  VimUtils.CreateUserCommand('PrintNekoLogs', function() Logger:print() end, { nargs = 0 })
   VimUtils.SetVar('loaded_nekovim', 1)
 end
 
