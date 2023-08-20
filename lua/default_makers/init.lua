@@ -98,7 +98,8 @@ local makers = {
 local props = {
   client_id = '1059272441194623126',
   multiple = true,
-  events = true
+  events = true,
+  idle_time = 156 -- 2.6s
 }
 
 return {

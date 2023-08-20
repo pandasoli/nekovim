@@ -89,7 +89,7 @@ function NekoVim:restart_idle_timer()
     vim.fn.timer_stop(self.idle_timer)
   end
 
-  self.idle_timer = vim.fn.timer_start(2 * 1000, function()
+  self.idle_timer = vim.fn.timer_start(self.work_props.idle_time * 1000, function()
     self.presence_props.idling = true
     self:update()
   end)
@@ -195,9 +195,10 @@ function NekoVim:make_work_props(makers)
 
   if type(makers) ~= 'table' then return props end
 
-  props.client_id = Maker_tostring(makers.client_id, self)
-  props.multiple  = Maker_toboolean(makers.multiple, self)
-  props.events    = Maker_toboolean(makers.events, self)
+  props.client_id = Maker_tostring (makers.client_id, self)
+  props.multiple  = Maker_toboolean(makers.multiple , self)
+  props.events    = Maker_toboolean(makers.events   , self)
+  props.idle_time = Maker_tonumber (makers.idle_time, self)
 
   return props
 end

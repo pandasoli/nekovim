@@ -2,8 +2,10 @@
 ---@field client_id? string
 ---@field multiple?  boolean
 ---@field events?    boolean
+---@field idle_time? integer
 
 ---@class WorkPropsMakers : WorkProps
 ---@field client_id? (fun(): string)|string
 ---@field mutliple?  (fun(): boolean)|boolean # Deal with multiple instances
 ---@field events?    (fun(): boolean)|boolean # Active vim update events
+---@field idle_time? (fun(): integer)|integer # Seconds plugin lates to get idle
