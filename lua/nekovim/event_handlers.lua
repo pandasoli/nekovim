@@ -17,7 +17,7 @@ function EventHandlers:setup(nekovim, log_to_file)
 
     ['BufEnter'] = function() self:handle_BufEnter() end,
     ['ModeChanged'] = function() self:handle_ModeChanged() end,
-    ['BufEnter,TextChanged'] = function() self:handle_KeyPressed() end
+    ['BufEnter,TextChanged'] = function() end
   }
 
   ---@param event string
@@ -26,6 +26,7 @@ function EventHandlers:setup(nekovim, log_to_file)
       Logger:write_to_file()
     end
 
+    self.nekovim:restart_idle_timer()
     events[event]()
   end
 
@@ -42,10 +43,6 @@ end
 function EventHandlers:handle_BufEnter()
   self.nekovim:make_buf_props()
   self.nekovim:update()
-end
-
-function EventHandlers:handle_KeyPressed()
-  self.nekovim:restart_idle_timer()
 end
 
 return EventHandlers
