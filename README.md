@@ -1,6 +1,6 @@
 <img height=150 align='right' src='./docs/undraw_welcome_cats_thqn.svg'/>
 
-# Neko[Vim](https://vim.org) &nbsp; <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f408.svg'/> <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f311.svg'/><img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2728.svg'/>
+# Neko[Vim](https://vim.org) <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f408.svg'/> <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2728.svg'/> <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f312.svg'/>
 
 <div align='center'>
 
@@ -21,11 +21,12 @@
 
 - Fast
 - No dependencies
+- Auto presence update
 - Multiple instances
 - Really highly configurable
 
   > The only thing you "cannot change" is the text “Playing **Neovim**”.  
-  > Actually, you can! But it would require changing the Discord bot (ez).
+  > Actually, you can! But it would require [changing the Discord bot](./docs/work_props.md).
 
 <br/>
 <br/>
@@ -50,11 +51,12 @@ If you don't configure it'll start with [a default config](./lua/default_makers/
 <br/>
 
 ```lua
----@type PresenceMakers
+---@type func(PresenceMakers, WorkPropsMakers)
 require 'Nekovim':setup {}
 ```
 
-More info about **Presence Makers** in [Presence Table](./docs/presence_table.md).
+More info about **Presence Makers** in [Presence Table](./docs/presence_table.md).  
+I explain more about **Work Props** in [Work Props](./docs/work_props.md).
 
 <br/>
 <br/>

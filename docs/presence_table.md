@@ -42,33 +42,38 @@ We use **Presence Makers** to generate the _Presence Table_.
 
 They are structured as the _Presence Table_.  
 Their fields can be a function that returns the expected value or it directly.
-```lua
----@class PresenceMakersAssets : PresenceAssets
----@field large_image? (fun(self: NekoVim): string)|string
----@field large_text?  (fun(self: NekoVim): string)|string
----@field small_image? (fun(self: NekoVim): string)|string
----@field small_text?  (fun(self: NekoVim): string)|string
 
----@class PresenceMakersTimestamps : PresenceTimestamps
----@field start? (fun(self: NekoVim): integer)|integer
----@field end?   (fun(self: NekoVim): integer)|integer
+<details>
+  <summary>See declaration</summary>
 
----@class PresenceMakers : Presence
----@field client_id  (fun(self: NekoVim): string)|string
----
----@field state?     (fun(self: NekoVim): string)|string
----@field details?   (fun(self: NekoVim): string)|string
----@field timestamps PresenceMakersTimestamps
----@field assets?    PresenceMakersAssets
----@field buttons?   ((fun(self: NekoVim): PresenceButton)|PresenceButton)[]
-```
-> <small><code>lua/types/presence_makers.lua</code></small>
+  ```lua
+  ---@class PresenceMakersAssets : PresenceAssets
+  ---@field large_image? (fun(self: NekoVim): string)|string
+  ---@field large_text?  (fun(self: NekoVim): string)|string
+  ---@field small_image? (fun(self: NekoVim): string)|string
+  ---@field small_text?  (fun(self: NekoVim): string)|string
+
+  ---@class PresenceMakersTimestamps : PresenceTimestamps
+  ---@field start? (fun(self: NekoVim): integer)|integer
+  ---@field end?   (fun(self: NekoVim): integer)|integer
+
+  ---@class PresenceMakers : Presence
+  ---@field state?     (fun(self: NekoVim): string)|string
+  ---@field details?   (fun(self: NekoVim): string)|string
+  ---@field timestamps PresenceMakersTimestamps
+  ---@field assets?    PresenceMakersAssets
+  ---@field buttons?   ((fun(self: NekoVim): PresenceButton)|PresenceButton)[]
+  ```
+  > <small><code>lua/types/presence_makers.lua</code></small>
+</details>
 
 <br/>
 <br/>
 
 The functions receive an instance of **NekoVim** because of:  
-<img width=12 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2139.svg'/> You can omit it if you're not going to need.
+<img width=12 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2139.svg'/>
+You can omit this param if you don't need it.
+
 <details>
   <summary><code>NekoVim.buffer_props</code></summary>
 
@@ -89,6 +94,11 @@ The functions receive an instance of **NekoVim** because of:
   ```lua
   ---@class PresenceProps
   ---@field startTimestamp integer
+  ---@field idling         boolean
   ```
   > <small><code>lua/types/presence_props.lua</code></small>
+
+  <br/>
+
+  See more about `idling` in _Work Props_.
 </details>
