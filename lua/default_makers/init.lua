@@ -30,13 +30,11 @@ local makers = {
       if self.presence_props.idling then
         return 'idle'
       end
-
-      return'lunarvim'
     end,
-    small_text = function(self)
-      if self.presence_props.idling then return end
-      return 'LunarVim'
-    end
+    -- small_text = function(self)
+    --   if self.presence_props.idling then return end
+    --   return 'NeoVim'
+    -- end
   },
 
   state = function(self)
@@ -99,7 +97,7 @@ local props = {
   client_id = '1059272441194623126',
   multiple = true,
   events = true,
-  idle_time = 156 -- 2.6s
+  idle_time = 120 -- 120s = 2m
 }
 
 return {
