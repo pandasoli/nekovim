@@ -1,4 +1,5 @@
 local msgpack = require 'vim-sockets.deps.msgpack'
+local VimUtils = require 'nekovim.vim_utils'
 
 require 'vim-sockets.lib.list_to_argv'
 
@@ -29,13 +30,11 @@ function VimSockets:setup(dep_path, logger, vim_events)
   self:register_self()
 
   if vim_events then
-    vim.api.nvim_create_user_command('PrintSockets', function() self:print_sockets() end, { nargs = 0 })
-    vim.api.nvim_create_user_command('PrintLogs', function() self.logger:print() end, { nargs = 0 })
+    VimUtils.CreateUserCommand('PrintSockets', function() self:print_sockets() end, { nargs = 0 })
+    VimUtils.CreateUserCommand('PrintLogs', function() self.logger:print() end, { nargs = 0 })
   end
 
-  vim.api.nvim_create_autocmd('VimLeavePre', {
-    callback = function() self:unregister_self() end
-  })
+  VimUtils.CreateAutoCmd('VimLeavePre', function() self:unregister_self() end)
 end
 
 function VimSockets:print_sockets()
