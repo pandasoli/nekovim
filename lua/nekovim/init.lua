@@ -241,13 +241,12 @@ function NekoVim:shutdown()
     if #VimSockets.sockets > 0 then
       local next_socket = VimSockets.sockets[1]
 
-      if Discord.tried_connection then
-        VimSockets:emit_to(next_socket, 'make connection')
-      end
-
+      VimSockets:emit_to(next_socket, 'make connection')
       VimSockets:emit_to(next_socket, 'update presence')
     end
   end
+
+  Discord:disconnect()
 end
 
 return NekoVim
