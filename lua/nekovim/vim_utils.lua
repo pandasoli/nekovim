@@ -33,9 +33,7 @@ end
 ---@param event string
 ---@param callback function
 function VimUtils.CreateAutoCmd(event, callback)
-  vim.api.nvim_create_autocmd(event, {
-    callback = callback
-  })
+  vim.api.nvim_command('autocmd ' .. event .. ' lua callback()')
 end
 
 ---@param name string
