@@ -33,12 +33,9 @@ end
 ---@param event string
 ---@param callback function
 function VimUtils.CreateAutoCmd(event, callback)
-  Callback = callback
-
-  local format = 'autocmd %s * lua Callback()'
-  local cmd = string.format(format, event)
-
-  vim.cmd(cmd, false)
+  vim.api.nvim_create_autocmd(event, {
+    callback = callback
+  })
 end
 
 ---@param name string

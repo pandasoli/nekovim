@@ -32,15 +32,26 @@
 <br/>
 <div align='right'>
 
-  ## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4e6.svg'/> Installation
+  ## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4bb.svg'/> Requirements
 </div>
+
+- NVIM `v0.9.2`  
+  LuaJIT `2.1.1693350652`
+
+<br/>
+<br/>
+
+## Installation <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4e6.svg'/>
 
 Add this repo (`pandasoli/nekovim`) to your plugins list.
 
 <br/>
 <br/>
+<div align='right'>
 
-## Configuration <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2699.svg'/>
+## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2699.svg'/> Configuration
+</div>
+
 The function `Nekovim:setup` is used to set up the plugin.  
 If you don't configure it'll start with [a default config](./lua/default_makers/init.lua).
 
@@ -60,10 +71,8 @@ I explain more about **Work Props** in [Work Props](./docs/work_props.md).
 
 <br/>
 <br/>
-<div align='right'>
 
-  ## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f9d1-200d-1f4bb.svg'/> Development
-</div>
+## Development <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f9d1-200d-1f4bb.svg'/>
 
 Before creating a pull request, read the [docs for developers](./DEVELOPMENT.md) <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2615.svg'/>.  
 We have also [some tasks to be done](./docs/todo.md) if you would like to help <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f389.svg'/>.
