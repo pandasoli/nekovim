@@ -85,7 +85,8 @@ function Discord:disconnect()
   if self.pipe then
     self.pipe:shutdown()
 
-    if self.pipe.is_closing then
+    -- I'm not sure why close after shutting down
+    if not self.pipe.is_closing then
       self.pipe:close()
     end
   end
