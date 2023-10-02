@@ -1,19 +1,23 @@
-<img height=150 align='right' src='./docs/undraw_welcome_cats_thqn.svg'/>
-
-# Neko[Vim](https://vim.org) <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f408.svg'/> <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2728.svg'/> <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f312.svg'/>
-
 <div align='center'>
+  <img width='200' src='docs/neovim-nekologo.png'/>
 
-  > Discord [Rich Presence](https://discord.com/rich-presence) plugin for [Neovim](https://neovim.io)
-
-  ![Linux](https://img.shields.io/badge/Linux-%23.svg?logo=linux&color=FCC624&logoColor=black)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  # <samp>[NekoVim](https://github.com/pandasoli/nekovim)</samp>
+  Discord [Rich Presence](https://discord.com/rich-presence) plugin for [Neovim](https://neovim.io)
 
   <br/>
+  <img src='https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/macchiato.png' width='600'/>
 
-  [**Features**](#features-) | [**Instalation**](#-installation) |
-  [**Configuration**](#configuration-) | [**Development**](#-development)
+  <br/>
+  <div align='center'>
+
+  ![Number of issues](https://img.shields.io/github/issues/pandasoli/nekovim?color=fab387&labelColor=303446&style=for-the-badge)
+  ![Number of starts](https://img.shields.io/github/stars/pandasoli/nekovim?color=ed8796&labelColor=303446&style=for-the-badge)
+  ![MIT license](https://img.shields.io/github/license/pandasoli/nekovim?style=for-the-badge&label=License&labelColor=313244&color=ca9ee6)
+
+  ![Supports linux](https://img.shields.io/badge/Linux-%23.svg?style=for-the-badge&logo=linux&logoColor=fcc624&label=support&labelColor=303446&color=fcc624)
+  </div>
 </div>
+
 <br/>
 <br/>
 
@@ -34,9 +38,17 @@
 
   ## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4bb.svg'/> Requirements
 </div>
+I didn't fully tested, but made with these versions:
+
+<br/>
+<br/>
 
 - NVIM `v0.9.2`  
   LuaJIT `2.1.1693350652`
+
+<br/>
+
+Important: This plugin doesn't support any other system than Linux.
 
 <br/>
 <br/>
