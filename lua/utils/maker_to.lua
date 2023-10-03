@@ -1,3 +1,6 @@
+require 'nekovim.std'
+
+
 ---@param self NekoVim
 ---@param maker (fun(self: NekoVim): string)|string
 ---@return string?
@@ -34,7 +37,7 @@ end
 function Maker_totable(maker, self)
   local res = type(maker) == 'function' and maker(self) or maker
 
-  if type(res) == 'table' and #res > 0 then
+  if type(res) == 'table' and GetTableSize(res) > 0 then
     return res
   end
 end

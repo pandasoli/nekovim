@@ -49,3 +49,15 @@ function JoinTables(target, ...)
 
   return target
 end
+
+---@param target table
+---@return number
+function GetTableSize(target)
+  local res = 0
+
+  for _, _ in pairs(target) do
+    res = res + 1
+	end
+
+  return res
+end
