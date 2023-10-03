@@ -2,7 +2,7 @@
 
   # Development <img width=30 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4bb.svg'>
 
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![MIT license](https://img.shields.io/github/license/pandasoli/nekovim?style=for-the-badge&label=License&labelColor=313244&color=ca9ee6)](LICENSE)
 
   Please read with the code of the last commit of this file.
 
