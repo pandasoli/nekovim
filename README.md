@@ -69,7 +69,8 @@ If you don't configure it'll start with [a default config](./lua/default_makers/
 
 <br/>
 <div align='center'>
-  <img src='./docs/preview.gif'/>
+  <img src='./docs/empty-preview.gif'/>
+  <img src='./docs/final-preview.gif'/>
 </div>
 <br/>
 
