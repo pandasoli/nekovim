@@ -1,5 +1,3 @@
-require 'utils.str_utils'
-
 ScriptPath = debug.getinfo(1, 'S').source:sub(2)
 package.path = package.path .. ';' .. ScriptPath:match '(.*)/.*/' .. '/deps/?.lua'
 
@@ -58,6 +56,22 @@ function GetTableSize(target)
   for _, _ in pairs(target) do
     res = res + 1
 	end
+
+  return res
+end
+
+---@param str string
+---@param sep string
+---@return string[]
+function string.split(str, sep)
+  sep = sep or '%s'
+
+  ---@type string[]
+  local res = {}
+
+  for part in string.gmatch(str, '([^'..sep..']+)') do
+    table.insert(res, part)
+  end
 
   return res
 end
