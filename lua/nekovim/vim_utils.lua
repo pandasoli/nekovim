@@ -33,7 +33,7 @@ end
 ---@param events string
 ---@param callback function
 function VimUtils.CreateAutoCmd(events, callback)
-  local events_list = event:split ','
+  local events_list = events:split ','
 
   vim.api.nvim_create_autocmd(events_list, {
     callback = callback
