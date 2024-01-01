@@ -30,10 +30,12 @@ function VimUtils.GetFileType()
   return type
 end
 
----@param event string
+---@param events string
 ---@param callback function
-function VimUtils.CreateAutoCmd(event, callback)
-  vim.api.nvim_create_autocmd(event, {
+function VimUtils.CreateAutoCmd(events, callback)
+  local events_list = event:split ','
+
+  vim.api.nvim_create_autocmd(events_list, {
     callback = callback
   })
 end
