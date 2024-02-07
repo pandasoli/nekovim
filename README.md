@@ -38,9 +38,10 @@
 
   ## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4bb.svg'/> Requirements
 </div>
-I didn't fully tested, but made with these versions:
 
-<br/>
+I didn't fully tested, but I made with the following versions.  
+If any bug occur, please let me know.
+
 <br/>
 
 - NVIM `v0.9.2`  
@@ -48,7 +49,8 @@ I didn't fully tested, but made with these versions:
 
 <br/>
 
-Important: This plugin doesn't support any other system than Linux.
+> [!WARNING]
+> This plugin only supports Linux systems.
 
 <br/>
 <br/>
