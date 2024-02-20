@@ -67,7 +67,7 @@ Add this repo (`pandasoli/nekovim`) to your plugins list.
 </div>
 
 The function `Nekovim:setup` is used to set up the plugin.  
-If you don't configure it'll start with [a default config](./lua/default_makers/init.lua).
+If you don't configure, it's gonna use [the default config](./lua/default_makers/init.lua).
 
 <br/>
 <div align='center'>
@@ -78,7 +78,7 @@ If you don't configure it'll start with [a default config](./lua/default_makers/
 
 ```lua
 ---@type func(PresenceMakers, WorkPropsMakers)
-require 'Nekovim':setup {}
+require 'nekovim':setup {}
 ```
 
 More info about **Presence Makers** in [Presence Table](./docs/presence_table.md).  

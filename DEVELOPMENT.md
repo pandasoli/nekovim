@@ -30,16 +30,17 @@
 - Clone the repo
 
   ```bash
-  git clone https://github.com/pandasoli/nekovim;\
+  git clone git@github.com:pandasoli/nekovim.git;\
   cd nekovim
   ```
 
 <br/>
 
 To test changes run:
-  ```bash
-  nvim --cmd 'set rtp+=.' <any file path>
-  ```
+> Make sure you _don't_ have **NekoVIM** in your plugins list
+```bash
+nvim --cmd 'set rtp+=.' <any file path>
+```
 
 <br/>
 <br/>
@@ -67,19 +68,19 @@ I maintain one connected instance; others emit the [_Presence Table_](./docs/pre
 </div>
 
 - **lua**
-  - **default_makers**
-    - **assets**
-      - **images** — all default available icons
-        > This is not used,  
-        > I just leave it here in case you want to download it.
+	- **default_makers**
+		- **assets**
+			- **images** — all default available icons
+				> This is not used,  
+				> I just leave it here in case you want to download it.
 
-  - **deps** — dependencies/used libraries
-  - **lib** — some generic scripts
-  - **nekovim** — source folder
-  - **types** — type definitions
-  - **utils** — useful scripts
+	- **deps** — dependencies/used libraries
+	- **lib** — some generic scripts
+	- **nekovim** — source folder
+	- **types** — type definitions
+	- **utils** — useful scripts
 - **plugin** — **Vim** plugin files
-  - **nekovim.vim** — File that runs after the editor’s config
+	- **nekovim.vim** — file that runs after the editor's config
 
 <br/>
 <br/>
@@ -102,7 +103,7 @@ The package `lua/lib/log.lua` contains:
 local Logger = {}
 ```
 
-I've modified all deps to log with it.
+I've modified all deps to log with this.
 
 <br/>
 <br/>
@@ -112,15 +113,15 @@ I've modified all deps to log with it.
   ## <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1fae5.svg'/> Generic files
 </div>
 
-First, let's see some files file you find in any Lua <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f312.svg'/> program,  
+First, let's see some files you find in any **Lua** <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f312.svg'/> program,  
 then you will get less lost.
 
-If you need, take a look at them.
+If you need, open them and take a look.
 
 - Everything inside `lua/lib`
 - Everything inside `lua/utils`
-- `lua/nekovim/std.lua` — functions to help deal with data
-- `lua/nekovim/vim_utils.lua` — **Vim** helpers
+	- `lua/utils/vim.lua` — **VIM** helpers
+- `lua/nekovim/std.lua` — functions to deal with **Lua** data structures
 
 <br/>
 <br/>
@@ -222,7 +223,8 @@ We create two events with _vim-sockets_.
 
 ```py
 if presence:
-  if discord.connected: # update
+  if discord.connected:
+    # update
 else:
   if presence := self.make_presence():
     if discord.connected:
