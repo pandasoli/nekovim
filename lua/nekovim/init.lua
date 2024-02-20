@@ -3,7 +3,7 @@ require 'utils.maker_to'
 
 local DefaultConfig = require 'default_makers'
 local EventHandlers = require 'nekovim.event_handlers'
-local VimUtils = require 'nekovim.vim_utils'
+local VimUtils = require 'utils.vim'
 local Logger = require 'lib.log'
 
 local VimSockets = require 'deps.vim-sockets'

@@ -1,5 +1,5 @@
 local msgpack = require 'vim-sockets.deps.msgpack'
-local VimUtils = require 'nekovim.vim_utils'
+local VimUtils = require 'utils.vim'
 
 require 'vim-sockets.lib.list_to_argv'
 
