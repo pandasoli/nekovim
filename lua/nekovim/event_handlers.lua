@@ -17,7 +17,7 @@ function EventHandlers:setup(nekovim, log_to_file)
 
     ['BufEnter'] = function() self:handle_BufEnter() end,
     ['ModeChanged'] = function() self:handle_ModeChanged() end,
-    ['BufEnter,TextChanged'] = function() end
+    ['BufWinLeave'] = function() self:handle_BufWinLeave() end
   }
 
   ---@param event string
@@ -44,6 +44,10 @@ function EventHandlers:handle_BufEnter()
   self.nekovim.current_buf = vim.api.nvim_get_current_buf()
   self.nekovim:make_buf_props()
   self.nekovim:update()
+end
+
+function EventHandlers:handle_BufWinLeave()
+	self.nekovim.buffers_props[self.nekovim.current_buf] = nil
 end
 
 return EventHandlers
