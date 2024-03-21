@@ -127,14 +127,12 @@ function NekoVim:make_buf_props()
   do
     local cmd = "git remote -v 2> /dev/null | grep -oP '(?<=:).*?(?=\\.git)'"
     local f = assert(io.popen(cmd))
-    local d = assert(f:read('*a')):split '\n'
+    local d = assert(f:read('*a')):match '(.-)\n'
     f:close()
 
     if #d > 0 then
-      local parts = d[1]:split '/'
-
-      repoOwner = parts[0]
-      repoName = parts[1]
+      repoOwner = d:match '(.-)/'
+      repoName = d:match '/(.*)'
     else
       repoName = projectPath:match '[^/\\]+$'
     end

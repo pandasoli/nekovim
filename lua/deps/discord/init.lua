@@ -1,4 +1,3 @@
-require 'discord.lib.str_utils'
 require 'discord.utils.json'
 require 'discord.uuid'
 
