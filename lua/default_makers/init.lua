@@ -15,14 +15,14 @@ local makers = {
         return 'keyboard'
       end
 
-      local props = self.buffer_props
+      local props = self.buffers_props[self.current_buf]
       local asset = assets:test(props.filePath, props.fileType)
       return asset.key
     end,
     large_text = function(self)
       if self.presence_props.idling then return end
 
-      local props = self.buffer_props
+      local props = self.buffers_props[self.current_buf]
       local asset = assets:test(props.filePath, props.fileType)
       return 'Editing ' .. asset.name .. ' file'
     end,
@@ -40,7 +40,7 @@ local makers = {
   state = function(self)
     if self.presence_props.idling then return end
 
-    return 'Working on ' .. self.buffer_props.repoName
+    return 'Working on ' .. self.buffers_props[self.current_buf].repoName
   end,
 
   details = function(self)
@@ -48,7 +48,7 @@ local makers = {
       return 'Sleeping on the keyboard...'
     end
 
-    local props = self.buffer_props
+    local props = self.buffers_props[self.current_buf]
     local asset = assets:test(props.filePath, props.fileType)
 
     if asset.type == 'file explorer' then

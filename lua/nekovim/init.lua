@@ -13,7 +13,7 @@ local Discord = require 'deps.discord'
 ---@class NekoVim
 ---@field presence_makers PresenceMakers
 ---@field presence_props  PresenceProps
----@field buffer_props    BufferProps
+---@field buffers_props   BuffersProps
 ---@field work_props      WorkProps
 ---@field vim_sockets?    VimSockets
 ---@field idle_timer?     number
@@ -26,6 +26,8 @@ function NekoVim:setup(makers, work_props)
   self.presence_props = { startTimestamp = os.time(), idling = false }
   self.work_props = self:make_work_props(JoinTables(DefaultConfig.props, work_props))
   self.idle_timer = -1
+  self.buffers_props = {}
+  self.current_buf = vim.api.nvim_get_current_buf()
 
   if self.work_props.multiple then
     self.vim_sockets = VimSockets
@@ -98,6 +100,11 @@ end
 -- // Data Makers // --
 
 function NekoVim:make_buf_props()
+  -- Check history
+  if self.buffers_props[self.current_buf] then
+    return
+  end
+
   local projectPath = VimUtils.GetCWD()
   local filePath = VimUtils.GetBufName()
 
@@ -130,7 +137,7 @@ function NekoVim:make_buf_props()
     end
   end
 
-  self.buffer_props = {
+  self.buffers_props[self.current_buf] = {
     mode = VimUtils.GetMode(),
     projectPath = projectPath,
     filePath = filePath,

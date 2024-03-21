@@ -5,3 +5,6 @@
 ---@field filePath      string?
 ---@field fileType      string?
 ---@field fileExtension string?
+
+---@class BuffersProps
+---@field [number] BufferProps

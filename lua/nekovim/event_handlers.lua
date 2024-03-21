@@ -36,11 +36,12 @@ function EventHandlers:setup(nekovim, log_to_file)
 end
 
 function EventHandlers:handle_ModeChanged()
-  self.nekovim.buffer_props.mode = VimUtils.GetMode()
+  self.nekovim.buffers_props[self.nekovim.current_buf].mode = VimUtils.GetMode()
   self.nekovim:update()
 end
 
 function EventHandlers:handle_BufEnter()
+  self.nekovim.current_buf = vim.api.nvim_get_current_buf()
   self.nekovim:make_buf_props()
   self.nekovim:update()
 end
