@@ -40,7 +40,7 @@ local makers = {
   state = function(self)
     if self.presence_props.idling then return end
 
-    return 'Working on ' .. self.buffers_props[self.current_buf].repoName
+    return 'Working on ' .. self.buffers_props[self.current_buf].repo.name
   end,
 
   details = function(self)
@@ -74,20 +74,17 @@ local makers = {
   end,
 
   buttons = {
-    function()
-      local f = assert(io.popen('git remote -v 2> /dev/null'))
-      local output = assert(f:read('*a'))
-      f:close()
+    function(self)
+    	local props = self.buffers_props[self.current_buf]
 
-      local err_msg = 'fatal: not a git repository'
-      if output:sub(1, #err_msg) == err_msg then
-        return
-      end
+			if not props.repo.owner then
+				return
+			end
 
-      local repo = output:match '[:/]([%w-]+/[%w-]+)'
-      if repo then
-        return { label = 'GitHub repo', url = 'https://github.com/' .. repo }
-      end
+			return {
+				label = 'GitHub repo',
+				url = 'https://github.com/' .. props.repo.owner .. '/' .. props.repo.name
+			}
     end
   }
 }

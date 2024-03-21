@@ -109,7 +109,7 @@ function NekoVim:make_buf_props()
   local filePath = VimUtils.GetBufName()
 
   ---@type string|nil
-  local repoName, fileName, fileExtension
+  local repoOwner, repoName, fileName, fileExtension
 
   -- When the terminal is open we cannot take the filepath yet, we have to wait it initialize,
   -- and there is not vim event for it so we just ignore the filePath.
@@ -125,13 +125,16 @@ function NekoVim:make_buf_props()
 
   -- repoName
   do
-    local cmd = "git remote -v 2> /dev/null | grep -oP '[^/]+(?=\\.git)'"
+    local cmd = "git remote -v 2> /dev/null | grep -oP '(?<=:).*?(?=\\.git)'"
     local f = assert(io.popen(cmd))
     local d = assert(f:read('*a')):split '\n'
     f:close()
 
     if #d > 0 then
-      repoName = d[1]
+      local parts = d[1]:split '/'
+
+      repoOwner = parts[0]
+      repoName = parts[1]
     else
       repoName = projectPath:match '[^/\\]+$'
     end
@@ -142,7 +145,10 @@ function NekoVim:make_buf_props()
     projectPath = projectPath,
     filePath = filePath,
     fileType = VimUtils.GetFileType(),
-    repoName = repoName,
+    repo = {
+			owner = repoOwner,
+			name = repoName
+		},
 
     fileName = fileName,
     fileExtension = fileExtension
