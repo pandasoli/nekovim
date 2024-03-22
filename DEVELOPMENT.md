@@ -1,6 +1,6 @@
 <div align='center'>
 
-  # Development <img width=30 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4bb.svg'>
+  # Development <img width=30 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4bb.svg'>
 
   [![MIT license](https://img.shields.io/github/license/pandasoli/nekovim?style=for-the-badge&label=License&labelColor=313244&color=ca9ee6)](LICENSE)
 
@@ -12,10 +12,10 @@
 <br/>
 <br/>
 
-## Pre-requisites <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f392.svg'/>
+## Pre-requisites <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f392.svg'/>
 
-1. [Type annotations](https://github.com/LuaLS/lua-language-server/wiki/Annotations)
-2. Have already configured the plugin
+1. Have already configured the plugin
+2. [Type annotations](https://github.com/LuaLS/lua-language-server/wiki/Annotations)
 3. Pointers in **Lua** (i.e. tables)
 
 <br/>
@@ -23,7 +23,7 @@
 <br/>
 <div align='right'>
   
-  ## <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f525.svg'/> Setting up environment
+  ## <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f525.svg'/> Setting up environment
 </div>
 
 - Remove the plugin from your plugins list
@@ -34,10 +34,7 @@
   cd nekovim
   ```
 
-<br/>
-
 To test changes run:
-> Make sure you _don't_ have **NekoVIM** in your plugins list
 ```bash
 nvim --cmd 'set rtp+=.' <any file path>
 ```
@@ -46,25 +43,24 @@ nvim --cmd 'set rtp+=.' <any file path>
 <br/>
 <br/>
 
-## Taken decisions <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2049.svg'/>
+## Taken decisions <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2049.svg'/>
 
-To communicate with **Discord** I used the library [discord-ipc](https://github.com/pandasoli/discord-ipc) <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f47e.svg'/>.   
+To communicate with **Discord** I used the library [discord-ipc](https://github.com/pandasoli/discord-ipc) <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f47e.svg'/>.   
 It uses a sockets connection (IPC connection - like _vim-sockets_).
 
 <br/>
 
 As **Discord** only accept the instance itself to modify its presence,  
-I used [vim-sockets](https://github.com/pandasoli/vim-sockets) <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4fa.svg'/>
-to communicate with other instances of **Vim**.
-
-I maintain one connected instance; others emit the [_Presence Table_](./docs/presence_table.md) when need to update.
+I used [vim-sockets](https://github.com/pandasoli/vim-sockets) <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4fa.svg'/>
+to communicate with other instances of **VIM**.  
+I maintain one connected instance; others emit [`PresenceProps`](./docs/presence_table.md) when need to update.
 
 <br/>
 <br/>
 <br/>
 <div align='right'>
 
-  ## <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f334.svg'/> Structure
+  ## <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f334.svg'/> Structure
 </div>
 
 - **lua**
@@ -79,16 +75,15 @@ I maintain one connected instance; others emit the [_Presence Table_](./docs/pre
 	- **nekovim** — source folder
 	- **types** — type definitions
 	- **utils** — useful scripts
-- **plugin** — **Vim** plugin files
-	- **nekovim.vim** — file that runs after the editor's config
 
 <br/>
 <br/>
 <br/>
 
-## Logs <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f426.svg'/>
+## Logging <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f426.svg'/>
+> I've modified all deps to log with this
 
-The package `lua/lib/log.lua` contains:
+The file `lua/lib/log.lua` contains:
 ```lua
 ---@class Logger
 ---@field logs          string[]
@@ -103,17 +98,15 @@ The package `lua/lib/log.lua` contains:
 local Logger = {}
 ```
 
-I've modified all deps to log with this.
-
 <br/>
 <br/>
 <br/>
 <div align='right'>
 
-  ## <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1fae5.svg'/> Generic files
+  ## <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fae5.svg'/> Generic files
 </div>
 
-First, let's see some files you find in any **Lua** <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f312.svg'/> program,  
+First, let's see some files you find in any **Lua** <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f312.svg'/> program,  
 then you will get less lost.
 
 If you need, open them and take a look.
@@ -127,7 +120,7 @@ If you need, open them and take a look.
 <br/>
 <br/>
 
-## Events <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f916.svg'/>
+## Events <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f916.svg'/>
 
 `lua/nekovim/event_handlers.lua` handles all the events.
 
@@ -143,13 +136,14 @@ function EventHandlers:setup(nekovim, log_to_file) end
 - `FocusGained` — When focus the window
 - `BufEnter` — When select another buffer
 - `ModeChanged` — When change the mode (normal, visual, replace...)
+- `BufWinLeave` — Before closing a buffer
 
 <br/>
 <br/>
 <br/>
 <div align='right'>
 
-  ## <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/26a0.svg'/> Core
+  ## <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/26a0.svg'/> Core
 </div>
 
 ```lua
@@ -158,21 +152,41 @@ require 'deps.vim-sockets'
 ---@class NekoVim
 ---@field presence_makers PresenceMakers
 ---@field presence_props  PresenceProps
----@field buffer_props    BufferProps
----@field vim_sockets     VimSockets
----@field logger          Logger
+---@field buffers_props   BuffersProps
+---@field work_props      WorkProps
+---@field vim_sockets?    VimSockets
+---@field current_buf     number
+---@field idle_timer?     number
 local NekoVim = {}
 ```
 
+- `presence_props` — store some information about the current status of the presence
+- `current_buf` — id of the current buffer
+- `idle_timer` — id of **VIM**'s timer used for idling
+
 <br/>
 <br/>
 
-Everything start from `:setup(makers: PresenceMakers)`.  
+Everything starts from `.setup(PresenceMakers, WorkPropsMakers)`.  
 It initializes every dependency and property.
 
-> It combines [default](./lua/default_makers/init.lua) and received _Presence Makers_.
+It combines the [default](./lua/default_makers/init.lua) and received `PresenceMakers`,  
+calls solve the `WorkPropsMakers` to `NekoVim.work_props`,  
+sets up multiple instances and the events, if enabled in the `WorkProps`,  
+and creates a user command to show logs (`:PrintNekoLogs`).
 
 <br/>
+<div align='right'>
+
+  ### <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f991.svg'/> Multiple instances
+</div>
+
+If the `WorkProps` received disables multiple instances we just call `:connect()`.  
+Otherwise we create two events with _vim-sockets_.
+- `update presence` — calls `self:update(Presence?)`
+- `make connection` — calls `self:connect()`
+
+And if there are no other instances running we call `:connect()`.
 
 <details>
   <summary>About <code>self.vim_sockets</code></summary>
@@ -185,41 +199,36 @@ It initializes every dependency and property.
   &emsp;and then passed the path (`package.loaded.nekovim.vim_sockets`).
 </details>
 
-<details>
-  <summary>About <code>self.logger</code></summary>
-
-  &emsp;The only way to run a function with `command!` is calling it through `package.loaded`.
-
-  &emsp;So it was needed to create `:PrintNekoLogs`, now we use `package.loaded.nekovim.logger:print()`.
-</details>
-
 <br/>
-<br/>
+<div align='right'>
 
-Data makers <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f3b2.svg'/>
-- `:make_presence()` returns a _Presence Table_ created with `self.presence_makers`
-- `:make_buf_props()` generates `self.buffer_props`
+  ### <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f916.svg'/> Events
+</div>
+
+If the `WorkProps` received enables events we set up the [`EventHandlers`](./lua/nekovim/event_handlers.lua) and
+call `:restart_idle_timer()`. Otherwise we just call `:update(Presence?)`.
+
+`:restart_idle_timer()` sets `presence_props.idling` to false,
+then creates a timer that waits some seconds and then sets `presence_props.idling` to true.
 
 <br/>
 <div align='right'>
 
-  ### <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f991.svg'/> Multiple instances
+  ### <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3b2.svg'/> Data makers
 </div>
 
-If there are no other instances, `:setup` calls `:connect()`.  
-_discord-ipc_ has a field `tried_connection` so we consider connected even if unconnected.
+- `:make_buf_props()` creates a `BufferProps` for the current buffer  
+	if it doesn't yet exist inside `buffers_props` accessable with the buffer's id
+
+- `:make_presence()` returns a `Presence` based on the `presence_makers`
+
+- `:make_work_props(WorkPropsMakers)` solves `WorkPropsMakers` and returns returns `WorkProps`
 
 <br/>
-
-We create two events with _vim-sockets_.
-- `update presence` — calls `self:update(presence: Presence?)`
-- `make connection` — calls `self:connect()`
-
+<br/>
 <br/>
 
-### `:update(presence)` <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f3af.svg'/>
-
-<br/>
+### `:update(presence)` <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3af.svg'/>
 
 ```py
 if presence:
@@ -238,21 +247,23 @@ else:
   <summary>Text explanation</summary>
 
   &emsp;If the current instance is connected we just update.  
-  &emsp;If not we emit the event `update presence` with the generated _Presence Table_ to all other instances.
+  &emsp;If not we emit the event `update presence` with the generated `PresenceProps`  
+	&emsp;to all other instances, just as [#taken-decisions](#taken-decisions) says.
 
   &emsp;But if `presence` is valid, the event `update presence` was received.  
   &emsp;If this instance is connected, we update the presence.
 </details>
 
 <br/>
-
-### `:shutdown()` <img width=24 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f480.svg'/>
-
 <br/>
+<br/>
+<div align='right'>
 
-If there is any other instance, we emit the events `make connection`,
-and `update presence` without pass any value,
-it will make the instance think `:update` was called by it itself and update with its own _Presence Table_.
+  ### <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f480.svg'/> `:shutdown()`
+</div>
+
+If there is any other instance, we emit the events `make connection` and `update presence`
+without pass any value, it will make the instance think `:update` was called by itself and update with its own `PresenceProps`.
 
 <br/>
 <br/>
@@ -266,11 +277,11 @@ it will make the instance think `:update` was called by it itself and update wit
 </div>
 <br/>
 
-You probably started reading this doc thinking about helping me in this project <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f9f8.svg'/>.  
-I cannot give you money <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4b0.svg'/> or anything for your time, but if you still want to help, I would be very happy!
+You probably started reading this doc thinking about helping me in this project <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9f8.svg'/>.  
+I cannot give you money <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4b0.svg'/> or anything for your time, but if you still want to help, I would be very happy!
 
 I probably have some [tasks](./docs/todo.md) to be done yet.  
 But that's it. This is just one more non-profit project made for devs.
 
-I don't have a server on **Discord** <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f47e.svg'/> focused on this project,  
+I don't have a server on **Discord** <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f47e.svg'/> focused on this project,  
 but you can talk to me there if you wish so (see my profile).

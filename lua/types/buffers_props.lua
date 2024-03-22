@@ -1,5 +1,5 @@
 ---@class BufferPropsRepo
----@field owner string
+---@field owner string?
 ---@field name  string
 
 ---@class BufferProps

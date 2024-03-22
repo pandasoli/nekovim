@@ -15,13 +15,16 @@ local Discord = require 'deps.discord'
 ---@field presence_props  PresenceProps
 ---@field buffers_props   BuffersProps
 ---@field work_props      WorkProps
----@field vim_sockets?    VimSockets
----@field idle_timer?     number
+---@field vim_sockets     VimSockets?
+---@field current_buf     number
+---@field idle_timer      number?
 local NekoVim = {}
 
 ---@param makers     PresenceMakers
 ---@param work_props WorkPropsMakers
-function NekoVim:setup(makers, work_props)
+function NekoVim.setup(makers, work_props)
+  local self = NekoVim
+
   self.presence_makers = JoinTables(DefaultConfig.makers, makers)
   self.presence_props = { startTimestamp = os.time(), idling = false }
   self.work_props = self:make_work_props(JoinTables(DefaultConfig.props, work_props))
@@ -60,7 +63,6 @@ function NekoVim:setup(makers, work_props)
   end
 
   VimUtils.CreateUserCommand('PrintNekoLogs', function() Logger:print() end, { nargs = 0 })
-  VimUtils.SetVar('loaded_nekovim', 1)
 end
 
 function NekoVim:connect()
@@ -130,7 +132,7 @@ function NekoVim:make_buf_props()
     local d = assert(f:read('*a')):match '(.-)\n'
     f:close()
 
-    if #d > 0 then
+    if d ~= nil and #d > 0 then
       repoOwner = d:match '(.-)/'
       repoName = d:match '/(.*)'
     else

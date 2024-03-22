@@ -21,7 +21,7 @@
 <br/>
 <br/>
 
-## Features <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2728.svg'/>
+## Features <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2728.svg'/>
 
 - Fast
 - No dependencies
@@ -36,7 +36,7 @@
 <br/>
 <div align='right'>
 
-  ## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4bb.svg'/> Requirements
+  ## <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4bb.svg'/> Requirements
 </div>
 
 I didn't fully tested, but I made with the following versions.  
@@ -55,7 +55,7 @@ If any bug occur, please let me know.
 <br/>
 <br/>
 
-## Installation <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4e6.svg'/>
+## Installation <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4e6.svg'/>
 
 Add this repo (`pandasoli/nekovim`) to your plugins list.
 
@@ -63,10 +63,10 @@ Add this repo (`pandasoli/nekovim`) to your plugins list.
 <br/>
 <div align='right'>
 
-## <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2699.svg'/> Configuration
+## <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2699.svg'/> Configuration
 </div>
 
-The function `Nekovim:setup` is used to set up the plugin.  
+The `Nekovim.setup` function is used to set up the plugin.  
 If you don't configure, it's gonna use [the default config](./lua/default_makers/init.lua).
 
 <br/>
@@ -78,7 +78,7 @@ If you don't configure, it's gonna use [the default config](./lua/default_makers
 
 ```lua
 ---@type func(PresenceMakers, WorkPropsMakers)
-require 'nekovim':setup {}
+require 'nekovim'.setup {}
 ```
 
 More info about **Presence Makers** in [Presence Table](./docs/presence_table.md).  
@@ -87,12 +87,12 @@ I explain more about **Work Props** in [Work Props](./docs/work_props.md).
 <br/>
 <br/>
 
-## Development <img width=20 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f9d1-200d-1f4bb.svg'/>
+## Development <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9d1-200d-1f4bb.svg'/>
 
-Before creating a pull request, read the [docs for developers](./DEVELOPMENT.md) <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2615.svg'/>.  
-We have also [some tasks to be done](./docs/todo.md) if you would like to help <img width=16 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f389.svg'/>.
+Before creating a pull request, read the [docs for developers](./DEVELOPMENT.md) <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2615.svg'/>  
+We have also [some tasks to be done](./docs/todo.md) if you would like to help <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f389.svg'/>
 
 <br/>
 
-I didn't know anything about creation of plugins before having troubles with other rich presence plugins.  
-A lot of code from [andweeb/presence.nvim](https://github.com/andweeb/presence.nvim) was used, so I would like to thanks them.
+I didn't know anything about creating a plugin before having troubles with other rich presence plugins.  
+I'd like to thank [andweeb/presence.nvim](https://github.com/andweeb/presence.nvim), their code helped me a lot developing **NekoVim**.

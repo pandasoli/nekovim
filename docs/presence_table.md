@@ -1,6 +1,6 @@
 <div align='center'>
 
-  # Presence table <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f4cb.svg'/>
+  # Presence table <img width=32 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4cb.svg'/>
 </div>
 
 The presence table that **Discord** expects:
@@ -32,13 +32,12 @@ The presence table that **Discord** expects:
 > <small><code>lua/deps/discord/types/activity.lua</code></small>
 
 <br/>
-<br/>
 <div align='center'>
 
-  # Presence Makers <img width=32 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/1f477.svg'/>
+  # Presence Makers <img width=32 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f477.svg'/>
 </div>
 
-We use **Presence Makers** to generate the _Presence Table_.
+We use `PresenceMakers` to generate the _Presence Table_.
 
 They are structured as the _Presence Table_.  
 Their fields can be a function that returns the expected value or it directly.
@@ -71,22 +70,31 @@ Their fields can be a function that returns the expected value or it directly.
 <br/>
 
 The functions receive an instance of **NekoVim** because of:  
-<img width=12 src='https://raw.githubusercontent.com/pandasoli/twemojis/master/2139.svg'/>
-You can omit this param if you don't need it.
 
 <details>
-  <summary><code>NekoVim.buffer_props</code></summary>
+  <summary><code>NekoVim.buffers_props</code></summary>
+
+  Every time a new buffer is open we register its properties (`BufferProps`)  
+  in a table organizaed by ids (`BuffersProps`).
 
   ```lua
+  ---@class BufferPropsRepo
+  ---@field owner string
+  ---@field name  string
+
   ---@class BufferProps
   ---@field mode          'n'|'i'|'v'|'c'|'R'|string
-  ---@field repoName      string
+  ---@field repo          BufferPropsRepo
   ---@field fileName      string?
   ---@field filePath      string?
   ---@field fileType      string?
   ---@field fileExtension string?
+
+  ---@class BuffersProps
+  ---@field [number] BufferProps
   ```
-  > <small><code>lua/types/buffer_props.lua</code></small>
+  > <small><code>lua/types/buffers_props.lua</code></small>
+
 </details>
 <details>
   <summary><code>NekoVim.presence_props</code></summary>
@@ -100,5 +108,5 @@ You can omit this param if you don't need it.
 
   <br/>
 
-  See more about `idling` in _Work Props_.
+  See more about `idling` in [`WorkProps`](./work_props.md).
 </details>
