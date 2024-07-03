@@ -21,7 +21,7 @@
 <br/>
 <br/>
 
-## Features <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2728.svg'/>
+## Features <img width=20 src='https://svgrepo.com/show/407500/sparkles.svg'/>
 
 - Fast
 - No dependencies
@@ -36,7 +36,7 @@
 <br/>
 <div align='right'>
 
-  ## <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4bb.svg'/> Requirements
+  ## <img width=20 src='https://svgrepo.com/show/406033/laptop.svg'/> Requirements
 </div>
 
 I didn't fully tested, but I made with the following versions.  
@@ -55,7 +55,7 @@ If any bug occur, please let me know.
 <br/>
 <br/>
 
-## Installation <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4e6.svg'/>
+## Installation <img width=20 src='https://svgrepo.com/show/406828/package.svg'/>
 
 Add this repo (`pandasoli/nekovim`) to your plugins list.
 
@@ -63,7 +63,7 @@ Add this repo (`pandasoli/nekovim`) to your plugins list.
 <br/>
 <div align='right'>
 
-## <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2699.svg'/> Configuration
+## <img width=20 src='https://svgrepo.com/show/405718/gear.svg'/> Configuration
 </div>
 
 The `Nekovim.setup` function is used to set up the plugin.  
@@ -87,7 +87,7 @@ I explain more about **Work Props** in [Work Props](./docs/work_props.md).
 <br/>
 <br/>
 
-## Development <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9d1-200d-1f4bb.svg'/>
+## Development <img width=20 src='https://svgrepo.com/show/407587/technologist.svg'/>
 
 Before creating a pull request, read the [docs for developers](./DEVELOPMENT.md) <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2615.svg'/>  
 We have also [some tasks to be done](./docs/todo.md) if you would like to help <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f389.svg'/>
