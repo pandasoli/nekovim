@@ -7,12 +7,12 @@
   Please read with the code of the last commit of this file.
 
   [**Pre-requisites**](#pre-requisites-) | [**Setting up environment**](#-setting-up-environment) | [**Taken decisions**](#taken-decisions-)  
-  [**Structure**](#-structure) | [**Logs**](#logs-) | [**Generic files**](#-generic-files) | [**Events**](#events-) | [**Core**](#-core)
+  [**Structure**](#-structure) | [**Logs**](#logging-) | [**Generic files**](#-generic-files) | [**Events**](#events-) | [**Core**](#-core)
 </div>
 <br/>
 <br/>
 
-## Pre-requisites <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f392.svg'/>
+## Pre-requisites <img width=24 src='https://svgrepo.com/show/404790/backpack.svg'/>
 
 1. Have already configured the plugin
 2. [Type annotations](https://github.com/LuaLS/lua-language-server/wiki/Annotations)
@@ -23,7 +23,7 @@
 <br/>
 <div align='right'>
   
-  ## <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f525.svg'/> Setting up environment
+  ## <img width=24 src='https://svgrepo.com/show/405378/fire.svg'/> Setting up environment
 </div>
 
 - Remove the plugin from your plugins list
@@ -43,15 +43,15 @@ nvim --cmd 'set rtp+=.' <any file path>
 <br/>
 <br/>
 
-## Taken decisions <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2049.svg'/>
+## Taken decisions <img width=24 src='https://svgrepo.com/show/405290/exclamation-question-mark.svg'/>
 
-To communicate with **Discord** I used the library [discord-ipc](https://github.com/pandasoli/discord-ipc) <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f47e.svg'/>.   
+To communicate with **Discord** I used the library [discord-ipc](https://github.com/pandasoli/discord-ipc) <img width=20 src='https://svgrepo.com/show/404714/alien-monster.svg'/>.   
 It uses a sockets connection (IPC connection - like _vim-sockets_).
 
 <br/>
 
 As **Discord** only accept the instance itself to modify its presence,  
-I used [vim-sockets](https://github.com/pandasoli/vim-sockets) <img width=20 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4fa.svg'/>
+I used [vim-sockets](https://github.com/pandasoli/vim-sockets) <img width=20 src='https://svgrepo.com/show/407598/television.svg'/>
 to communicate with other instances of **VIM**.  
 I maintain one connected instance; others emit [`PresenceProps`](./docs/presence_table.md) when need to update.
 
@@ -60,7 +60,7 @@ I maintain one connected instance; others emit [`PresenceProps`](./docs/presence
 <br/>
 <div align='right'>
 
-  ## <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f334.svg'/> Structure
+  ## <img width=24 src='https://svgrepo.com/show/406838/palm-tree.svg'/> Structure
 </div>
 
 - **lua**
@@ -80,7 +80,7 @@ I maintain one connected instance; others emit [`PresenceProps`](./docs/presence
 <br/>
 <br/>
 
-## Logging <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f426.svg'/>
+## Logging <img width=24 src='https://svgrepo.com/show/404838/bird.svg'/>
 > I've modified all deps to log with this
 
 The file `lua/lib/log.lua` contains:
@@ -103,10 +103,10 @@ local Logger = {}
 <br/>
 <div align='right'>
 
-  ## <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fae5.svg'/> Generic files
+  ## <img width=24 src='https://svgrepo.com/show/406709/neutral-face.svg'/> Generic files
 </div>
 
-First, let's see some files you find in any **Lua** <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f312.svg'/> program,  
+First, let's see some files you find in any **Lua** <img width=16 src='https://svgrepo.com/show/405712/full-moon.svg'/> program,  
 then you will get less lost.
 
 If you need, open them and take a look.
@@ -120,7 +120,7 @@ If you need, open them and take a look.
 <br/>
 <br/>
 
-## Events <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f916.svg'/>
+## Events <img width=24 src='https://svgrepo.com/show/407351/robot.svg'/>
 
 `lua/nekovim/event_handlers.lua` handles all the events.
 
@@ -143,7 +143,7 @@ function EventHandlers:setup(nekovim, log_to_file) end
 <br/>
 <div align='right'>
 
-  ## <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/26a0.svg'/> Core
+  ## <img width=24 src='https://svgrepo.com/show/407712/warning.svg'/> Core
 </div>
 
 ```lua
@@ -178,7 +178,7 @@ and creates a user command to show logs (`:PrintNekoLogs`).
 <br/>
 <div align='right'>
 
-  ### <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f991.svg'/> Multiple instances
+  ### <img width=24 src='https://svgrepo.com/show/407518/squid.svg'/> Multiple instances
 </div>
 
 If the `WorkProps` received disables multiple instances we just call `:connect()`.  
@@ -202,7 +202,7 @@ And if there are no other instances running we call `:connect()`.
 <br/>
 <div align='right'>
 
-  ### <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f916.svg'/> Events
+  ### <img width=24 src='https://svgrepo.com/show/407351/robot.svg'/> Events
 </div>
 
 If the `WorkProps` received enables events we set up the [`EventHandlers`](./lua/nekovim/event_handlers.lua) and
@@ -214,7 +214,7 @@ then creates a timer that waits some seconds and then sets `presence_props.idlin
 <br/>
 <div align='right'>
 
-  ### <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3b2.svg'/> Data makers
+  ### <img width=24 src='https://svgrepo.com/show/405714/game-die.svg'/> Data makers
 </div>
 
 - `:make_buf_props()` creates a `BufferProps` for the current buffer  
@@ -228,7 +228,7 @@ then creates a timer that waits some seconds and then sets `presence_props.idlin
 <br/>
 <br/>
 
-### `:update(presence)` <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3af.svg'/>
+### `:update(presence)` <img width=24 src='https://svgrepo.com/show/404901/bullseye.svg'/>
 
 ```py
 if presence:
@@ -259,7 +259,7 @@ else:
 <br/>
 <div align='right'>
 
-  ### <img width=24 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f480.svg'/> `:shutdown()`
+  ### <img width=24 src='https://svgrepo.com/show/407453/skull.svg'/> `:shutdown()`
 </div>
 
 If there is any other instance, we emit the events `make connection` and `update presence`
@@ -277,11 +277,11 @@ without pass any value, it will make the instance think `:update` was called by 
 </div>
 <br/>
 
-You probably started reading this doc thinking about helping me in this project <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9f8.svg'/>.  
-I cannot give you money <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4b0.svg'/> or anything for your time, but if you still want to help, I would be very happy!
+You probably started reading this doc thinking about helping me in this project <img width=16 src='https://svgrepo.com/show/407591/teddy-bear.svg'/>.  
+I cannot give you money <img width=16 src='https://svgrepo.com/show/406655/money-bag.svg'/> or anything for your time, but if you still want to help, I would be very happy!
 
 I probably have some [tasks](./docs/todo.md) to be done yet.  
 But that's it. This is just one more non-profit project made for devs.
 
-I don't have a server on **Discord** <img width=16 src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f47e.svg'/> focused on this project,  
+I don't have a server on **Discord** <img width=16 src='https://svgrepo.com/show/406743/octopus.svg'/> focused on this project,  
 but you can talk to me there if you wish so (see my profile).
