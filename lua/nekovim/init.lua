@@ -86,8 +86,6 @@ end
 
 function NekoVim:restart_idle_timer()
   self.presence_props.idling = false
-  self:make_buf_props()
-  self:update()
 
   if self.idle_timer ~= -1 then
     vim.fn.timer_stop(self.idle_timer)
