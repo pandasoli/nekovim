@@ -23,7 +23,7 @@ local assets = {
     c = { name = 'C', key = 'c' },
     h = { name = 'C header', key = 'c' },
 
-    a68 = { name = 'ALGOL 68', key = 'a68' },
+    algol68 = { name = 'ALGOL 68', key = 'algol68' },
 
     cpp = { name = 'C++', key = 'cpp' },
     hpp = { name = 'C++ header', key = 'cpp' },
