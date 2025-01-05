@@ -86,7 +86,7 @@ function Discord:get_sockets()
 	if self.os.name == 'linux' then
 		cmd = "ss -lx | grep -o '[^[:space:]]*discord[^[:space:]]*'"
 	elseif self.os.name == 'windows' then
-		cmd = 'powershell.exe -Command "(Get-ChildItem \\\\.\\pipe\\).FullName | Select-String -Pattern \'discord\'"'
+		cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr discord]]
 	end
 
   local f = assert(io.popen(cmd, 'r'))
