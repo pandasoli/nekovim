@@ -23,14 +23,33 @@ function Discord:setup(client_id, logger, callback)
   if logger then self.logger = logger end
   self.client_id = client_id
 
+	local uname = vim.loop.os_uname()
+	self.os = {
+		name = self.get_osname(uname)
+	}
+
   self:test_sockets(function() self:authorize(callback) end)
   self.tried_connection = true
+end
+
+---@param uname string
+---@return 'windows'|'macos'|'linux'|'unkown' osname
+function Discord.get_osname(uname)
+	if uname.sysname:find('Windows') then
+		return 'windows'
+	elseif uname.sysname:find('Darwin') then
+		return 'macos'
+	elseif uname.sysname:find('Linux') then
+		return 'linux'
+	end
+
+	return 'unkown'
 end
 
 ---@private
 ---@param callback? fun(self: Discord)
 function Discord:test_sockets(callback)
-  local sockets = self.get_sockets()
+  local sockets = self:get_sockets()
   local sockets_len = #sockets
   local pipe = assert(vim.loop.new_pipe(false))
 
@@ -61,8 +80,14 @@ end
 
 ---@private
 ---@return string[] sockets
-function Discord.get_sockets()
-  local cmd = "ss -lx | grep -o '[^[:space:]]*discord[^[:space:]]*'"
+function Discord:get_sockets()
+  local cmd
+
+	if self.os.name == 'linux' then
+		cmd = "ss -lx | grep -o '[^[:space:]]*discord[^[:space:]]*'"
+	elseif self.os.name == 'windows' then
+		cmd = 'powershell.exe -Command "(Get-ChildItem \\\\.\\pipe\\).FullName | Select-String -Pattern \'discord\'"'
+	end
 
   local f = assert(io.popen(cmd, 'r'))
   local d = assert(f:read('*a'))
