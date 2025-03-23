@@ -144,9 +144,9 @@ function NekoVim:make_buf_props()
     filePath = filePath,
     fileType = VimUtils.GetFileType(),
     repo = {
-			owner = repoOwner,
-			name = repoName
-		},
+      owner = repoOwner,
+      name = repoName
+    },
 
     fileName = fileName,
     fileExtension = fileExtension

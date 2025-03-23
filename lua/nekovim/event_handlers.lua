@@ -47,7 +47,7 @@ function EventHandlers:handle_BufEnter()
 end
 
 function EventHandlers:handle_BufWinLeave()
-	self.nekovim.buffers_props[self.nekovim.current_buf] = nil
+  self.nekovim.buffers_props[self.nekovim.current_buf] = nil
 end
 
 return EventHandlers

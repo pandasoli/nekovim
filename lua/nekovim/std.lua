@@ -55,7 +55,7 @@ function GetTableSize(target)
 
   for _, _ in pairs(target) do
     res = res + 1
-	end
+  end
 
   return res
 end

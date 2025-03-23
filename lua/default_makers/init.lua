@@ -75,16 +75,16 @@ local makers = {
 
   buttons = {
     function(self)
-    	local props = self.buffers_props[self.current_buf]
+      local props = self.buffers_props[self.current_buf]
 
-			if not props.repo.owner then
-				return
-			end
+      if not props.repo.owner then
+        return
+      end
 
-			return {
-				label = 'GitHub repo',
-				url = 'https://github.com/' .. props.repo.owner .. '/' .. props.repo.name
-			}
+      return {
+        label = 'GitHub repo',
+        url = 'https://github.com/' .. props.repo.owner .. '/' .. props.repo.name
+      }
     end
   }
 }
