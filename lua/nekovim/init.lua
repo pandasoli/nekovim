@@ -135,6 +135,8 @@ function NekoVim:make_buf_props()
       url = url:gsub('%.git$', '')
 
       repoOwner, repoName = url:match '.*[:/]([^/]+)/(.*)'
+    else
+      repoName = projectPath:match '[^/\\]+$'
     end
   end
 
