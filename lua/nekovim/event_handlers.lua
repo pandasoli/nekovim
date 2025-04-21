@@ -15,39 +15,44 @@ function EventHandlers:setup(nekovim, log_to_file)
     ['VimLeavePre'] = function() self.nekovim:shutdown() end,
     ['FocusGained'] = function() self.nekovim:update() end,
 
-    ['BufEnter'] = function() self:handle_BufEnter() end,
-    ['ModeChanged'] = function() self:handle_ModeChanged() end,
-    ['BufWinLeave'] = function() self:handle_BufWinLeave() end
+		---@param props {buf: integer}
+    ['BufEnter'] = function(props) self:handle_BufEnter(props) end,
+
+		---@param props {buf: integer}
+    ['ModeChanged'] = function(props) self:handle_ModeChanged(props) end,
+
+		---@param props {buf: integer}
+    ['BufWinLeave'] = function(props) self:handle_BufWinLeave(props) end
   }
 
   ---@param event string
-  local function trigger(event)
+  local function trigger(event, props)
     if log_to_file then
       Logger:write_to_file()
     end
 
     self.nekovim:restart_idle_timer()
-    events[event]()
+    events[event](props)
   end
 
   for event in pairs(events) do
-    VimUtils.CreateAutoCmd(event, function() trigger(event) end)
+    VimUtils.CreateAutoCmd(event, function(props) trigger(event, props) end)
   end
 end
 
-function EventHandlers:handle_ModeChanged()
-  self.nekovim.buffers_props[self.nekovim.current_buf].mode = VimUtils.GetMode()
+function EventHandlers:handle_ModeChanged(props)
+  self.nekovim.buffers_props[props.buf].mode = VimUtils.GetMode()
   self.nekovim:update()
 end
 
-function EventHandlers:handle_BufEnter()
-  self.nekovim.current_buf = vim.api.nvim_get_current_buf()
+function EventHandlers:handle_BufEnter(props)
+  self.nekovim.current_buf = props.buf
   self.nekovim:make_buf_props()
   self.nekovim:update()
 end
 
-function EventHandlers:handle_BufWinLeave()
-  self.nekovim.buffers_props[self.nekovim.current_buf] = nil
+function EventHandlers:handle_BufWinLeave(props)
+  self.nekovim.buffers_props[props.buf] = nil
 end
 
 return EventHandlers
