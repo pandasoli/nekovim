@@ -41,8 +41,15 @@ function EventHandlers:setup(nekovim, log_to_file)
 end
 
 function EventHandlers:handle_ModeChanged(props)
-  self.nekovim.buffers_props[props.buf].mode = VimUtils.GetMode()
-  self.nekovim:update()
+	local buf = self.nekovim.buffers_props[props.buf]
+
+	-- When a folder is open for some reason the buffer is not
+	-- registered-it should be. For the moment I'll leave a check here.
+
+	if buf then
+		self.nekovim.buffers_props[props.buf].mode = VimUtils.GetMode()
+		self.nekovim:update()
+	end
 end
 
 function EventHandlers:handle_BufEnter(props)
