@@ -15,13 +15,13 @@ function EventHandlers:setup(nekovim, log_to_file)
     ['VimLeavePre'] = function() self.nekovim:shutdown() end,
     ['FocusGained'] = function() self.nekovim:update() end,
 
-		---@param props {buf: integer}
+    ---@param props {buf: integer}
     ['BufEnter'] = function(props) self:handle_BufEnter(props) end,
 
-		---@param props {buf: integer}
+    ---@param props {buf: integer}
     ['ModeChanged'] = function(props) self:handle_ModeChanged(props) end,
 
-		---@param props {buf: integer}
+    ---@param props {buf: integer}
     ['BufWinLeave'] = function(props) self:handle_BufWinLeave(props) end
   }
 
@@ -41,15 +41,15 @@ function EventHandlers:setup(nekovim, log_to_file)
 end
 
 function EventHandlers:handle_ModeChanged(props)
-	local buf = self.nekovim.buffers_props[props.buf]
+  local buf = self.nekovim.buffers_props[props.buf]
 
-	-- When a folder is open for some reason the buffer is not
-	-- registered-it should be. For the moment I'll leave a check here.
+  -- When a folder is open for some reason the buffer is not
+  -- registered-it should be. For the moment I'll leave a check here.
 
-	if buf then
-		self.nekovim.buffers_props[props.buf].mode = VimUtils.GetMode()
-		self.nekovim:update()
-	end
+  if buf then
+    self.nekovim.buffers_props[props.buf].mode = VimUtils.GetMode()
+    self.nekovim:update()
+  end
 end
 
 function EventHandlers:handle_BufEnter(props)

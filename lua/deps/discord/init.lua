@@ -22,28 +22,23 @@ local Discord = {}
 function Discord:setup(client_id, logger, callback)
   if logger then self.logger = logger end
   self.client_id = client_id
-
-	local uname = vim.loop.os_uname()
-	self.os = {
-		name = self.get_osname(uname)
-	}
+  self.os = { name = self.get_osname() }
 
   self:test_sockets(function() self:authorize(callback) end)
   self.tried_connection = true
 end
 
----@param uname string
----@return 'windows'|'macos'|'linux'|'unkown' osname
-function Discord.get_osname(uname)
-	if uname.sysname:find('Windows') then
-		return 'windows'
-	elseif uname.sysname:find('Darwin') then
-		return 'macos'
-	elseif uname.sysname:find('Linux') then
-		return 'linux'
-	end
+---@return 'windows'|'linux'|'unkown' osname
+function Discord.get_osname()
+  local uname = vim.loop.os_uname()
 
-	return 'unkown'
+  if uname.sysname:find('Windows') then
+    return 'windows'
+  elseif uname.sysname:find('Linux') then
+    return 'linux'
+  end
+
+  return 'unkown'
 end
 
 ---@private
@@ -83,11 +78,11 @@ end
 function Discord:get_sockets()
   local cmd
 
-	if self.os.name == 'linux' then
-		cmd = "ss -lx | grep -o '[^[:space:]]*discord[^[:space:]]*'"
-	elseif self.os.name == 'windows' then
-		cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr discord]]
-	end
+  if self.os.name == 'linux' then
+    cmd = "ss -lx | grep -o '[^[:space:]]*discord[^[:space:]]*'"
+  elseif self.os.name == 'windows' then
+    cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr discord]]
+  end
 
   local f = assert(io.popen(cmd, 'r'))
   local d = assert(f:read('*a'))

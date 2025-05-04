@@ -1,1 +1,6 @@
 nekovim.log
+
+# Neovim local configuration files
+.nvim.lua
+.nvimrc
+.exrc

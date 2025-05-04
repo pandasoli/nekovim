@@ -26,6 +26,7 @@ function VimSockets:setup(dep_path, logger, vim_events)
   self.logger = logger
   self.sockets = {}
   self.receivers = {}
+  self.os = { name = self.get_osname() }
 
   self:register_self()
 
@@ -35,6 +36,19 @@ function VimSockets:setup(dep_path, logger, vim_events)
   end
 
   VimUtils.CreateAutoCmd('VimLeavePre', function() self:unregister_self() end)
+end
+
+---@return 'windows'|'linux'|'unkown' osname
+function VimSockets.get_osname()
+  local uname = vim.loop.os_uname()
+
+  if uname.sysname:find('Windows') then
+    return 'windows'
+  elseif uname.sysname:find('Linux') then
+    return 'linux'
+  end
+
+  return 'unkown'
 end
 
 function VimSockets:print_sockets()
@@ -81,7 +95,7 @@ end
 
 ---@private
 function VimSockets:register_self()
-  self.sockets = self.get_socket_paths()
+  self.sockets = self:get_socket_paths()
 
   self.logger:debug('register_self', 'Registered self for', #self.sockets - 1, 'sockets')
 
@@ -112,8 +126,14 @@ end
 
 ---@private
 ---@return string[]
-function VimSockets.get_socket_paths()
-  local cmd = "ss -lx | grep -o '[^[:space:]]*vim[^[:space:]]*'"
+function VimSockets:get_socket_paths()
+  local cmd
+
+  if self.os.name == 'linux' then
+    cmd = "ss -lx | grep -o '[^[:space:]]*nvim[^[:space:]]*'"
+  elseif self.os.name == 'windows' then
+    cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr nvim]]
+  end
 
   local f = assert(io.popen(cmd))
   local data = assert(f:read('*a'))
