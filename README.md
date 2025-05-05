@@ -14,7 +14,8 @@
   ![Number of stars](https://img.shields.io/github/stars/pandasoli/nekovim?color=ed8796&labelColor=303446&style=for-the-badge)
   [![MIT license](https://img.shields.io/github/license/pandasoli/nekovim?style=for-the-badge&label=License&labelColor=313244&color=ca9ee6)](LICENSE)
 
-  ![Supports linux](https://img.shields.io/badge/Linux-%23.svg?style=for-the-badge&logo=linux&logoColor=fcc624&label=support&labelColor=303446&color=fcc624)
+  ![Supports Linux](https://img.shields.io/badge/Linux-%23.svg?style=for-the-badge&logo=linux&logoColor=eed49f&label=support&labelColor=303446&color=eed49f)
+  ![Supports Windows](https://img.shields.io/badge/Windows-%23.svg?style=for-the-badge&label=support&labelColor=303446&color=7dc4e4)
   </div>
 </div>
 
@@ -48,16 +49,15 @@ If any bug occur, please let me know.
   LuaJIT `2.1.1693350652`
 
 <br/>
-
-> [!WARNING]
-> This plugin only supports Linux systems.
-
-<br/>
 <br/>
 
 ## Installation <img width=20 src='https://svgrepo.com/show/406828/package.svg'/>
 
 Add this repo (`pandasoli/nekovim`) to your plugins list.
+
+> [!NOTE]
+> Multi-instance does _not_ work on Windows yet.  
+> It should be working but for some reason it's not, I'm accepting pull requests.
 
 <br/>
 <br/>
