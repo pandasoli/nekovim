@@ -40,7 +40,14 @@ local makers = {
   state = function(self)
     if self.presence_props.idling then return end
 
-    return 'Working on ' .. self.buffers_props[self.current_buf].repo.name
+    local cmd = 'git remote get-url origin'
+    local f = assert(io.popen(cmd))
+    local url = assert(f:read('*a'))
+    f:close()
+
+    local _, repoName = url:match '.*[:/]([^/]+)/(.*)'
+
+    return 'Working on '..repoName
   end,
 
   details = function(self)
@@ -74,17 +81,18 @@ local makers = {
   end,
 
   buttons = {
-    function(self)
-      local props = self.buffers_props[self.current_buf]
+    function()
+      local cmd = 'git remote get-url origin'
+      local f = assert(io.popen(cmd))
+      local url = assert(f:read('*a'))
+      f:close()
 
-      if not props.repo.owner then
-        return
+      if #url > 0 then
+        return {
+          label = 'Repository',
+          url = url
+        }
       end
-
-      return {
-        label = 'GitHub repo',
-        url = 'https://github.com/' .. props.repo.owner .. '/' .. props.repo.name
-      }
     end
   }
 }
