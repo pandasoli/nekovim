@@ -3,6 +3,7 @@ local VimUtils = require 'utils.vim'
 
 require 'vim-sockets.lib.list_to_argv'
 
+local uv = vim.loop
 
 ---@class ReceiverProps
 ---@field event   string
@@ -40,7 +41,7 @@ end
 
 ---@return 'windows'|'linux'|'unkown' osname
 function VimSockets.get_osname()
-  local uname = vim.loop.os_uname()
+  local uname = uv.os_uname()
 
   if uname.sysname:find('Windows') then
     return 'windows'
@@ -127,19 +128,40 @@ end
 ---@private
 ---@return string[]
 function VimSockets:get_socket_paths()
-  local cmd
+  local files = {}
 
   if self.os.name == 'linux' then
-    cmd = "ss -lx | grep -o '[^[:space:]]*nvim[^[:space:]]*'"
+    local dirs = {
+      vim.env.XDG_RUNTIME_DIR or '/tmp',
+      '/run/user/'..uv.getuid()
+    }
+
+    for _, dir in ipairs(dirs) do
+      local handle = uv.fs_scandir(dir)
+      if not handle then
+        self.logger:error('Discord:get_sockets', 'Could not scan directory ('..dir..')')
+      else
+        while true do
+          local name, type = uv.fs_scandir_next(handle)
+          if not name then break end
+
+          if type == 'socket' and name:match '^nvim%.' then
+            table.insert(files, dir..'/'..name)
+          end
+        end
+      end
+    end
   elseif self.os.name == 'windows' then
-    cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr nvim]]
+    local cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr nvim]]
+
+    local f = assert(io.popen(cmd))
+    local data = assert(f:read('*a'))
+    f:close()
+
+    files = data:split '\n'
   end
 
-  local f = assert(io.popen(cmd))
-  local data = assert(f:read('*a'))
-  f:close()
-
-  return data:split '\n'
+  return files
 end
 
 ---@private
@@ -161,7 +183,7 @@ end
 ---@param cmd       string
 ---@param callback? fun(err: string|nil)
 function VimSockets:call_instance(socket, cmd, callback)
-  local pipe = assert(vim.loop.new_pipe(true))
+  local pipe = assert(uv.new_pipe(true))
 
   pipe:connect(socket, function()
     local packed = msgpack.pack({ 0, 0, 'nvim_command', { cmd } })

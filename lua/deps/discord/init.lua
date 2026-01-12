@@ -2,6 +2,7 @@ require 'discord.utils.json'
 require 'discord.uuid'
 
 local struct = require 'discord.deps.struct'
+local uv = vim.loop
 
 ---@class WaitingActivity
 ---@field activity  Presence?
@@ -30,7 +31,7 @@ end
 
 ---@return 'windows'|'linux'|'unkown' osname
 function Discord.get_osname()
-  local uname = vim.loop.os_uname()
+  local uname = uv.os_uname()
 
   if uname.sysname:find('Windows') then
     return 'windows'
@@ -46,7 +47,7 @@ end
 function Discord:test_sockets(callback)
   local sockets = self:get_sockets()
   local sockets_len = #sockets
-  local pipe = assert(vim.loop.new_pipe(false))
+  local pipe = assert(uv.new_pipe(false))
 
   local tried_connections = 0
 
@@ -76,19 +77,40 @@ end
 ---@private
 ---@return string[] sockets
 function Discord:get_sockets()
-  local cmd
+  local files = {}
 
   if self.os.name == 'linux' then
-    cmd = "ss -lx | grep -o '[^[:space:]]*discord[^[:space:]]*'"
+    local dirs = {
+      vim.env.XDG_RUNTIME_DIR or '/tmp',
+      '/run/user/'..uv.getuid()
+    }
+
+    for _, dir in ipairs(dirs) do
+      local handle = uv.fs_scandir(dir)
+      if not handle then
+        self.logger:error('Discord:get_sockets', 'Could not scan directory ('..dir..')')
+      else
+        while true do
+          local name, type = uv.fs_scandir_next(handle)
+          if not name then break end
+
+          if type == 'socket' and name:match '^discord%-ipc%-' then
+            table.insert(files, dir..'/'..name)
+          end
+        end
+      end
+    end
   elseif self.os.name == 'windows' then
-    cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr discord]]
+    local cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr discord]]
+
+    local f = assert(io.popen(cmd, 'r'))
+    local d = assert(f:read('*a'))
+    f:close()
+
+    files = d:split '\n'
   end
 
-  local f = assert(io.popen(cmd, 'r'))
-  local d = assert(f:read('*a'))
-  f:close()
-
-  return d:split '\n'
+  return files
 end
 
 ---@return boolean
@@ -123,7 +145,7 @@ function Discord:set_activity(activity, callback)
       nonce = Generate_uuid(),
       args = {
         activity = activity,
-        pid = vim.loop:os_getpid()
+        pid = uv:os_getpid()
       }
     }
 
