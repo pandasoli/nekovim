@@ -1,4 +1,3 @@
-require 'discord.utils.json'
 require 'discord.uuid'
 
 local struct = require 'discord.deps.struct'
@@ -12,9 +11,10 @@ local uv = vim.loop
 ---@field client_id        string
 ---@field logger           Logger
 ---@field socket           string # Just for debuging
----@field pipe             uv_pipe_t?
+---@field pipe             uv.uv_pipe_t?
 ---@field waiting_activity WaitingActivity?
 ---@field tried_connection boolean
+---@field reading          boolean
 local Discord = {}
 
 ---@param client_id string
@@ -66,6 +66,7 @@ function Discord:test_sockets(callback)
       else
         self.pipe = pipe
         self.socket = socket
+        self:start_reading()
         if callback then callback(self) end
 
         self.logger:log('Discord:test_sockets', 'Successful connection with', socket)
@@ -172,34 +173,53 @@ function Discord:authorize(callback)
 end
 
 ---@private
+function Discord:start_reading()
+  if self.reading or not self.pipe then return end
+  self.reading = true
+
+  ---@param err string|nil
+  ---@param chunk string
+  local function read_fn(err, chunk)
+    if err then
+      self.logger:error('Discord:start_reading', err)
+      return
+    end
+
+    vim.schedule(function()
+      local opcode, length = struct.unpack('<ii', chunk)
+      local msg = chunk:sub(9, 8 + length)
+
+      local success, result = pcall(vim.fn.json_decode, msg)
+      if success then
+        if self._pending_callback then
+          local callback = self._pending_callback
+          self._pending_callback = nil
+          callback(result, opcode)
+        end
+      else
+        self.logger:error('Discord:start_reading', result)
+      end
+    end)
+  end
+
+  self.pipe:read_start(read_fn)
+end
+
+---@private
 ---@param opcode    number
 ---@param payload   table
 ---@param callback? fun(response: (table|string)?, opcode: number?, err: string?)
 function Discord:call(opcode, payload, callback)
   callback = callback or function() end
+  self._pending_callback = callback
 
-  local function read_fn(read_err, chunk)
-    if read_err then
-      callback(nil, nil, 'reading: ' .. read_err)
-    elseif chunk then
-      local msg = chunk:match('({.+)')
-      local opcode = struct.unpack('<ii', chunk)
-
-      DecodeJSON(msg, function(success, response)
-        opcode = tonumber(opcode) or opcode
-        callback(success and response or chunk, opcode)
-      end)
-    end
-  end
-
-  EncodeJSON(payload, function(body)
+  vim.schedule(function()
+    local body = vim.fn.json_encode(payload)
     local msg = struct.pack('<ii', opcode, #body) .. body
 
-    self.pipe:write(msg, function(write_err)
-      if write_err then
-        callback(nil, nil, 'writing: ' .. write_err)
-      else
-        self.pipe:read_start(read_fn)
+    self.pipe:write(msg, function(err)
+      if err then
+        callback(nil, nil, 'writing: ' .. err)
       end
     end)
   end)

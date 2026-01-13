@@ -1,6 +1,9 @@
 local VimUtils = require 'utils.vim'
 local Logger = require 'lib.log'
 
+local uv = vim.loop
+local timer = uv.new_timer()
+local dirty = false
 
 ---@class EventHandlers
 ---@field private nekovim NekoVim
@@ -27,12 +30,24 @@ function EventHandlers:setup(nekovim, log_to_file)
 
   ---@param event string
   local function trigger(event, props)
-    if log_to_file then
-      Logger:write_to_file()
-    end
+    if dirty then return end
+    dirty = true
 
-    self.nekovim:restart_idle_timer()
-    events[event](props)
+    local buf = self.nekovim.buffers_props[props.buf] or {fileName = 'unknown'}
+    Logger:debug('EventHandlers:setup.trigger', event, buf.fileName)
+
+    timer:stop()
+    timer:start(500, 0, function()
+      vim.schedule(function()
+        if log_to_file then
+          Logger:write_to_file()
+        end
+
+        self.nekovim:restart_idle_timer()
+        events[event](props)
+        dirty = false
+      end)
+    end)
   end
 
   for event in pairs(events) do

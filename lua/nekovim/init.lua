@@ -79,7 +79,7 @@ function NekoVim:connect()
 
     vim.schedule(function()
       res = type(res) == 'table' and vim.fn.json_encode(res) or res
-      Logger:error('NekoVim:conect', opcode, res)
+      Logger:error('NekoVim:connect', opcode, res)
     end)
   end)
 end
