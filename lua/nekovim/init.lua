@@ -3,7 +3,6 @@ require 'utils.maker_to'
 
 local DefaultConfig = require 'default_makers'
 local EventHandlers = require 'nekovim.event_handlers'
-local VimUtils = require 'utils.vim'
 local Logger = require 'lib.log'
 
 local VimSockets = require 'deps.vim-sockets'
@@ -18,6 +17,7 @@ local Discord = require 'deps.discord'
 ---@field vim_sockets     VimSockets?
 ---@field current_buf     number
 ---@field idle_timer      number?
+---@field main_instance  boolean
 local NekoVim = {}
 
 ---@param makers     PresenceMakers
@@ -48,9 +48,11 @@ function NekoVim.setup(makers, work_props)
     end)
 
     if #VimSockets.sockets == 0 then
+      self.main_instance = true
       self:connect()
     end
   else
+    self.main_instance = true
     self:connect()
   end
 
@@ -62,7 +64,7 @@ function NekoVim.setup(makers, work_props)
     self:update()
   end
 
-  VimUtils.CreateUserCommand('PrintNekoLogs', function() Logger:print() end, { nargs = 0 })
+  vim.api.nvim_create_user_command('PrintNekoLogs', function() Logger:print() end, { nargs = 0 })
 end
 
 function NekoVim:connect()
@@ -72,14 +74,10 @@ function NekoVim:connect()
     return
   end
 
-  Discord:setup(client_id, Logger, function(res, opcode, err)
-    if err then
-      return Logger:error('NekoVim:connect', err)
-    end
-
+  Discord:setup(client_id, Logger, function(opcode, msg)
     vim.schedule(function()
-      res = type(res) == 'table' and vim.fn.json_encode(res) or res
-      Logger:error('NekoVim:connect', opcode, res)
+      local body = vim.fn.json_encode(msg)
+      Logger:error('NekoVim:Discord', opcode, body)
     end)
   end)
 end
@@ -99,21 +97,24 @@ end
 
 -- // Data Makers // --
 
-function NekoVim:make_buf_props()
+---@param buf? number Buffer ID
+function NekoVim:make_buf_props(buf)
+  buf = buf or vim.api.nvim_get_current_buf()
+
   -- Check history
-  if self.buffers_props[self.current_buf] then
+  if self.buffers_props[buf] then
     return
   end
 
-  local projectPath = VimUtils.GetCWD()
-  local filePath = VimUtils.GetBufName()
+  local projectPath = vim.uv.cwd()
+  local filePath = vim.api.nvim_buf_get_name(buf)
 
   ---@type string|nil
   local fileName, fileExtension
 
   -- When the terminal is open we cannot take the filepath yet, we have to wait it initialize,
   -- and there is not vim event for it so we just ignore the filePath.
-  if filePath then
+  if filePath ~= '' then
     -- We want filePath to be relative to the projectPath
     if filePath:sub(1, #projectPath) == projectPath then
       filePath = filePath:sub(#projectPath + 2)
@@ -123,11 +124,14 @@ function NekoVim:make_buf_props()
     fileExtension = fileName:match '%.(.+)$'
   end
 
-  self.buffers_props[self.current_buf] = {
-    mode = VimUtils.GetMode(),
+  local mode = vim.api.nvim_get_mode().mode
+  local fileType = vim.bo[buf].filetype or nil
+
+  self.buffers_props[buf] = {
+    mode = mode,
     projectPath = projectPath,
     filePath = filePath,
-    fileType = VimUtils.GetFileType(),
+    fileType = fileType,
     fileName = fileName,
     fileExtension = fileExtension
   }
@@ -198,32 +202,19 @@ end
 
 ---@param presence? Presence
 function NekoVim:update(presence)
-  local function set_activity()
-    Discord:set_activity(presence, function(res, opcode, err)
-      if err then
-        return Logger:error('NekoVim:update', err)
-      end
-
-      vim.schedule(function()
-        res = type(res) == 'table' and vim.fn.json_encode(res) or res
-        Logger:info('NekoVim:update', opcode, res)
-      end)
-    end)
-  end
-
   if not presence then
     presence = self:make_presence()
     if not presence then return end
+  end
 
-    if Discord.tried_connection then
+  if self.main_instance then
+    if Discord:is_connected() then
       Logger:debug('NekoVim:update', 'Setting presence')
-      set_activity()
-    elseif self.work_props.multiple then
-      Logger:debug('NekoVim:update', 'Emitting update event')
-      self.vim_sockets:emit('update presence', presence)
+      Discord:set_activity(presence)
     end
-  elseif Discord.tried_connection then
-    set_activity()
+  elseif self.work_props.multiple then
+    Logger:debug('NekoVim:update', 'Emitting update event')
+    self.vim_sockets:emit('update presence', presence)
   end
 end
 

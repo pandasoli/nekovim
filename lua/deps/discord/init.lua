@@ -3,91 +3,50 @@ require 'discord.uuid'
 local struct = require 'discord.deps.struct'
 local uv = vim.loop
 
----@class WaitingActivity
----@field activity  Presence?
----@field callback? fun(response: string?, err_name: string?, err_msg: string?)
-
 ---@class Discord
----@field client_id        string
----@field logger           Logger
----@field socket           string # Just for debuging
----@field pipe             uv.uv_pipe_t?
----@field waiting_activity WaitingActivity?
----@field tried_connection boolean
----@field reading          boolean
+---@field client_id string
+---@field logger    Logger
+---@field pipe      uv.uv_pipe_t?
+---@field pid       number
+---@field listeners fun(opcode: number, msg: string)[]
 local Discord = {}
 
 ---@param client_id string
 ---@param logger    Logger
----@param callback? fun(response: (table|string)?, opcode: number?, err: string?)
-function Discord:setup(client_id, logger, callback)
+---@param listener? fun(opcode: number, msg: string)
+function Discord:setup(client_id, logger, listener)
   if logger then self.logger = logger end
   self.client_id = client_id
-  self.os = { name = self.get_osname() }
 
-  self:test_sockets(function() self:authorize(callback) end)
-  self.tried_connection = true
-end
+  self.pid = uv:os_getpid()
+  self.listeners = {}
 
----@return 'windows'|'linux'|'unkown' osname
-function Discord.get_osname()
-  local uname = uv.os_uname()
-
-  if uname.sysname:find('Windows') then
-    return 'windows'
-  elseif uname.sysname:find('Linux') then
-    return 'linux'
+  if listener then
+    self.listeners[1] = listener
   end
 
-  return 'unkown'
+  self:test_sockets(function() self:authorize() end)
 end
 
----@private
----@param callback? fun(self: Discord)
-function Discord:test_sockets(callback)
-  local sockets = self:get_sockets()
-  local sockets_len = #sockets
-  local pipe = assert(uv.new_pipe(false))
-
-  local tried_connections = 0
-
-  for i, socket in ipairs(sockets) do
-    if self.pipe then break end
-
-    self.logger:log('Discord:test_sockets', 'Trying connection with socket', tostring(i)..'/'..tostring(sockets_len))
-    pipe:connect(socket, function(err)
-      if err then
-        pipe:close()
-        tried_connections = tried_connections + 1
-
-        if tried_connections == sockets_len then
-          self.logger:log('Discord:test_sockets', 'Could not connect to any socket ('..tostring(sockets_len)..')')
-        end
-      else
-        self.pipe = pipe
-        self.socket = socket
-        self:start_reading()
-        if callback then callback(self) end
-
-        self.logger:log('Discord:test_sockets', 'Successful connection with', socket)
-      end
-    end)
-  end
+function Discord:is_connected()
+  return self.pipe and self.pipe:is_active()
 end
 
 ---@private
 ---@return string[] sockets
 function Discord:get_sockets()
   local files = {}
+  local sys = uv.os_uname().sysname
 
-  if self.os.name == 'linux' then
+  if sys == 'Linux' then
     local dirs = {
       vim.env.XDG_RUNTIME_DIR or '/tmp',
-      '/run/user/'..uv.getuid()
+      '/run/user/' .. uv.getuid()
     }
 
     for _, dir in ipairs(dirs) do
       local handle = uv.fs_scandir(dir)
+
       if not handle then
         self.logger:error('Discord:get_sockets', 'Could not scan directory ('..dir..')')
       else
@@ -101,7 +60,8 @@ function Discord:get_sockets()
         end
       end
     end
-  elseif self.os.name == 'windows' then
+
+  elseif sys == 'Windows' then
     local cmd = [[powershell -Command (Get-ChildItem \\.\pipe\).FullName | findstr discord]]
 
     local f = assert(io.popen(cmd, 'r'))
@@ -109,117 +69,118 @@ function Discord:get_sockets()
     f:close()
 
     files = d:split '\n'
+
+  else
+    error('Unsupported system. Supported systems are Linux and Windows.')
   end
 
   return files
 end
 
----@return boolean
-function Discord:is_active()
-  if self.pipe then
-    return self.pipe:is_active() or false
-  end
+---@private
+---@param callback? fun(self: Discord)
+function Discord:test_sockets(callback)
+  local sockets = self:get_sockets()
 
-  return false
+  self.logger:log('Discord:test_sockets', 'Trying to connected with '..tostring(#sockets)..' sockets')
+
+  for i, socket in ipairs(sockets) do
+    local pipe = assert(uv.new_pipe(false))
+    local num = tostring(i)..'/'..tostring(#sockets)
+
+    pipe:connect(socket, function(err)
+      if self:is_connected() then
+        pipe:close()
+        return
+      end
+
+      if err then
+        pipe:close()
+        self.logger:log('Discord:test_sockets', 'Could not connect with socket', num)
+        return
+      end
+
+      self.pipe = pipe
+      self:read()
+      if callback then callback(self) end
+
+      self.logger:log('Discord:test_sockets', 'Successful connection with socket', socket, '('..num..')')
+    end)
+  end
 end
 
 function Discord:disconnect()
-  if self.pipe then
-    self.pipe:shutdown()
+  if not self.pipe then self.pipe:shutdown() end
 
-    -- I'm not sure why close after shutting down
-    if not self.pipe.is_closing then
+  self.pipe:shutdown(function()
+    if not self.pipe:is_active() then
       self.pipe:close()
     end
-  end
+    self.pipe = nil
+  end)
 end
 
----@param activity  Presence?
----@param callback? fun(response: (table|string)?, opcode: number?, err: string?)
-function Discord:set_activity(activity, callback)
-  if not self.pipe or not self.pipe:is_active() then
-    self.logger:log('Discord:set_activity', 'adding to wait')
-    self.waiting_activity = { activity = activity, callback = callback }
-  else
-    local payload = {
-      cmd = 'SET_ACTIVITY',
-      nonce = Generate_uuid(),
-      args = {
-        activity = activity,
-        pid = uv:os_getpid()
-      }
+---@param activity Presence
+function Discord:set_activity(activity)
+  local payload = {
+    cmd = 'SET_ACTIVITY',
+    nonce = Generate_uuid(),
+    args = {
+      activity = activity,
+      pid = self.pid
     }
+  }
 
-    self.logger:log('Discord:set_activity', 'calling')
-    self:call(1, payload, callback)
-  end
+  self.logger:log('Discord:set_activity', 'calling')
+  self:call(1, payload)
 end
 
 ---@private
----@param callback? fun(response: (table|string)?, opcode: number?, err: string?)
-function Discord:authorize(callback)
+function Discord:authorize()
   local payload = {
     client_id = self.client_id,
     v = 1
   }
 
-  self:call(0, payload, function(...)
-    if self.waiting_activity then
-      self:set_activity(self.waiting_activity.activity, self.waiting_activity.callback)
-    end
-
-    if callback then callback(...) end
-  end)
+  self:call(0, payload)
 end
 
 ---@private
-function Discord:start_reading()
-  if self.reading or not self.pipe then return end
-  self.reading = true
-
-  ---@param err string|nil
-  ---@param chunk string
-  local function read_fn(err, chunk)
+function Discord:read()
+  self.pipe:read_start(function(err, chunk)
     if err then
-      self.logger:error('Discord:start_reading', err)
+      self.logger:error('Discord:read', err)
       return
     end
 
-    vim.schedule(function()
-      local opcode, length = struct.unpack('<ii', chunk)
-      local msg = chunk:sub(9, 8 + length)
+    chunk = type(chunk) ~= 'string' and tostring(chunk) or chunk
 
-      local success, result = pcall(vim.fn.json_decode, msg)
-      if success then
-        if self._pending_callback then
-          local callback = self._pending_callback
-          self._pending_callback = nil
-          callback(result, opcode)
-        end
-      else
-        self.logger:error('Discord:start_reading', result)
-      end
-    end)
-  end
+    local opcode, length = struct.unpack('<ii', chunk)
+    local msg = chunk:sub(9, 8 + length)
 
-  self.pipe:read_start(read_fn)
+    local success, result = pcall(vim.fn.json_decode, msg)
+    if not success then
+      self.logger:error('Discord:read', result)
+      return
+    end
+
+    for _, fn in ipairs(self.listeners) do
+      fn(opcode, result)
+    end
+  end)
 end
 
 ---@private
 ---@param opcode    number
 ---@param payload   table
----@param callback? fun(response: (table|string)?, opcode: number?, err: string?)
-function Discord:call(opcode, payload, callback)
-  callback = callback or function() end
-  self._pending_callback = callback
-
+function Discord:call(opcode, payload)
   vim.schedule(function()
     local body = vim.fn.json_encode(payload)
     local msg = struct.pack('<ii', opcode, #body) .. body
 
     self.pipe:write(msg, function(err)
       if err then
-        callback(nil, nil, 'writing: ' .. err)
+        self.logger:error('Discord:call', 'writing:', err)
       end
     end)
   end)

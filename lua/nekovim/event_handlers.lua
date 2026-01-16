@@ -1,9 +1,4 @@
-local VimUtils = require 'utils.vim'
 local Logger = require 'lib.log'
-
-local uv = vim.loop
-local timer = uv.new_timer()
-local dirty = false
 
 ---@class EventHandlers
 ---@field private nekovim NekoVim
@@ -20,38 +15,32 @@ function EventHandlers:setup(nekovim, log_to_file)
 
     ---@param props {buf: integer}
     ['BufEnter'] = function(props) self:handle_BufEnter(props) end,
+    ['BufWinEnter'] = function(props) self:handle_BufEnter(props) end,
+    ['WinEnter'] = function(props) self:handle_BufEnter(props) end,
 
     ---@param props {buf: integer}
-    ['ModeChanged'] = function(props) self:handle_ModeChanged(props) end,
+    -- ['ModeChanged'] = function(props) self:handle_ModeChanged(props) end,
 
     ---@param props {buf: integer}
-    ['BufWinLeave'] = function(props) self:handle_BufWinLeave(props) end
+    ['BufWipeout'] = function(props) self:handle_BufWipeout(props) end
   }
 
   ---@param event string
   local function trigger(event, props)
-    if dirty then return end
-    dirty = true
+    vim.schedule(function()
+      if log_to_file then
+        Logger:write_to_file()
+      end
 
-    local buf = self.nekovim.buffers_props[props.buf] or {fileName = 'unknown'}
-    Logger:debug('EventHandlers:setup.trigger', event, buf.fileName)
-
-    timer:stop()
-    timer:start(500, 0, function()
-      vim.schedule(function()
-        if log_to_file then
-          Logger:write_to_file()
-        end
-
-        self.nekovim:restart_idle_timer()
-        events[event](props)
-        dirty = false
-      end)
+      self.nekovim:restart_idle_timer()
+      events[event](props)
     end)
   end
 
   for event in pairs(events) do
-    VimUtils.CreateAutoCmd(event, function(props) trigger(event, props) end)
+    vim.api.nvim_create_autocmd(event, {
+      callback = function(props) trigger(event, props) end
+    })
   end
 end
 
@@ -62,18 +51,24 @@ function EventHandlers:handle_ModeChanged(props)
   -- registered-it should be. For the moment I'll leave a check here.
 
   if buf then
-    self.nekovim.buffers_props[props.buf].mode = VimUtils.GetMode()
+    self.nekovim.buffers_props[props.buf].mode = vim.api.nvim_get_mode().mode
     self.nekovim:update()
   end
 end
 
 function EventHandlers:handle_BufEnter(props)
   self.nekovim.current_buf = props.buf
-  self.nekovim:make_buf_props()
+  self.nekovim:make_buf_props(props.buf)
   self.nekovim:update()
 end
 
-function EventHandlers:handle_BufWinLeave(props)
+function EventHandlers:handle_BufWipeout(props)
+  -- Telescope creates temporary internal buffers that get destroyed using
+  -- BufWipeout after usage.
+  if not self.nekovim.buffers_props[props.buf] then
+    return
+  end
+
   self.nekovim.buffers_props[props.buf] = nil
 end
 

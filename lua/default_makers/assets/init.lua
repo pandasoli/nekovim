@@ -180,7 +180,8 @@ local assets = {
   },
 
   file_explorers = {
-    NvimTree = { name = 'NvimTree', key = 'nvimtree' }
+    NvimTree = { name = 'NvimTree', key = 'nvimtree' },
+    TelescopePrompt = { name = 'Telescope', key = 'telescope' }
   },
 
   plugin_managers = {
@@ -196,25 +197,29 @@ local assets = {
 function assets:test(filePath, fileType)
   local txt_res = JoinTables({ type = 'language' }, self.languages['txt'])
 
-  if not filePath or not fileType then
+  if not fileType then
     return txt_res
   end
 
-  local fileName = filePath:match '[^/\\]+$' or ''
-  local fileExtension = fileName:match '%.(.+)$'
+  local fileName = filePath and filePath:match '[^/\\]+$' or nil
+  local fileExtension = fileName and fileName:match '%.(.+)$' or nil
   local res
 
   local function test_lang()
     -- Try with file's name
-    res = self.languages[fileName]
-    if res then return end
+    if fileName then
+      res = self.languages[fileName]
+      if res then return end
+    end
 
     -- Try with filetype
     res = self.languages[fileType]
     if res then return end
 
     -- Try with file's extension
-    res = self.languages[fileExtension]
+    if fileExtension then
+      res = self.languages[fileExtension]
+    end
   end
 
   local function test_file_explorer()
