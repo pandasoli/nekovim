@@ -1,5 +1,31 @@
 local assets = require 'default_makers.assets'
 
+---@class GitRepositoryMetadata
+---@field owner string
+---@field name string
+---@field url string
+
+---@return GitRepositoryMetadata?
+local function getGitRepository()
+  local f = io.popen('git remote get-url origin 2>/dev/null', 'r')
+  if not f then return end
+
+  local url = f:read('*a')
+  local ok, _, status = f:close()
+
+  if not ok or status ~= 0 or not url or url == '' then
+    return
+  end
+
+  local owner, name = url:match '.*[:/]([^/]+)/(.*)'
+
+  return {
+    owner = owner,
+    name = name,
+    url = url
+  }
+end
+
 
 ---@type PresenceMakers
 local makers = {
@@ -40,14 +66,10 @@ local makers = {
   state = function(self)
     if self.presence_props.idling then return end
 
-    local cmd = 'git remote get-url origin'
-    local f = assert(io.popen(cmd))
-    local url = assert(f:read('*a'))
-    f:close()
+    local repo = getGitRepository()
+    if not repo then return end
 
-    local _, repoName = url:match '.*[:/]([^/]+)/(.*)'
-
-    return 'Working on '..repoName
+    return 'Working on '..repo.name
   end,
 
   details = function(self)
@@ -82,17 +104,13 @@ local makers = {
 
   buttons = {
     function()
-      local cmd = 'git remote get-url origin'
-      local f = assert(io.popen(cmd))
-      local url = assert(f:read('*a'))
-      f:close()
+      local repo = getGitRepository()
+      if not repo then return end
 
-      if #url > 0 then
-        return {
-          label = 'Repository',
-          url = url
-        }
-      end
+      return {
+        label = 'Repository',
+        url = repo.url
+      }
     end
   }
 }
