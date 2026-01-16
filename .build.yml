@@ -1,0 +1,10 @@
+image: alpine/edge
+sources:
+- https://git.sr.ht/~elisoli/nekovim
+secrets:
+- 8f003ef7-67e5-4ec0-beef-fc205168d50e
+tasks:
+- mirror: |
+    cd nekovim
+    ssh-keyscan github.com >> ~/.ssh/known_hosts
+    git push -f --mirror git@github.com:pandasoli/nekovim.git
