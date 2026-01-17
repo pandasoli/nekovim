@@ -5,8 +5,7 @@ local Logger = require 'lib.log'
 local EventHandlers = {}
 
 ---@param nekovim NekoVim
----@param log_to_file? boolean # Write logs to file every time an event is trigged
-function EventHandlers:setup(nekovim, log_to_file)
+function EventHandlers:setup(nekovim)
   self.nekovim = nekovim
 
   local events = {
@@ -27,11 +26,9 @@ function EventHandlers:setup(nekovim, log_to_file)
 
   ---@param event string
   local function trigger(event, props)
-    vim.schedule(function()
-      if log_to_file then
-        Logger:write_to_file()
-      end
+    Logger:debug('EventHandlers:setup.trigger', event)
 
+    vim.schedule(function()
       self.nekovim:restart_idle_timer()
       events[event](props)
     end)

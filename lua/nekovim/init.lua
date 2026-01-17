@@ -31,6 +31,7 @@ function NekoVim.setup(makers, work_props)
   self.idle_timer = -1
   self.buffers_props = {}
   self.current_buf = vim.api.nvim_get_current_buf()
+  Logger.write_to_file = false
 
   if self.work_props.multiple then
     self.vim_sockets = VimSockets
@@ -57,7 +58,7 @@ function NekoVim.setup(makers, work_props)
   end
 
   if self.work_props.events then
-    EventHandlers:setup(self, false)
+    EventHandlers:setup(self)
     self:restart_idle_timer()
   else
     self:make_buf_props()
@@ -75,10 +76,7 @@ function NekoVim:connect()
   end
 
   Discord:setup(client_id, Logger, function(opcode, msg)
-    vim.schedule(function()
-      local body = vim.fn.json_encode(msg)
-      Logger:error('NekoVim:Discord', opcode, body)
-    end)
+    Logger:debug('NekoVim:Discord', opcode, msg)
   end)
 end
 
@@ -219,6 +217,10 @@ function NekoVim:update(presence)
 end
 
 function NekoVim:shutdown()
+  if Logger.write_to_file then
+    Logger.file:close()
+  end
+
   if self.work_props.multiple then
     if #VimSockets.sockets > 0 then
       local next_socket = VimSockets.sockets[1]

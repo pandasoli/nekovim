@@ -8,6 +8,8 @@
 
 ---@class Logger
 ---@field logs Log[]
+---@field file? file*
+---@field write_to_file boolean
 local Log = {
   logs = {},
   levels = {
@@ -39,6 +41,16 @@ function Log:log(level, from, ...)
   }
 
   table.insert(self.logs, log)
+
+  if self.write_to_file then
+    if not self.file then
+      local path = vim.fn.stdpath('state') .. '/nekovim.log'
+      self.file = assert(io.open(path, 'a'))
+    end
+
+    local str = string.format('%s [%s]: %s\n', from, time, msg)
+    self.file:write(str)
+  end
 end
 
 ---@param from string
@@ -68,24 +80,6 @@ function Log:print()
       {']: ' .. log.msg, level}
     }, true, {})
   end
-end
-
--- Write logs to ./nekovim.log
-function Log:write_to_file()
-  local file = 'nekovim.log'
-  local logs = ''
-
-  for i, log in ipairs(self.logs) do
-    if i > 0 then logs = logs .. '\n' end
-    local str = string.format('%s [%s]: %s', log.from, log.time, log.msg)
-    logs = logs .. str
-  end
-
-  os.remove(file)
-
-  local f = assert(io.open(file, 'w'))
-  f:write(logs)
-  f:close()
 end
 
 return Log

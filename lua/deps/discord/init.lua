@@ -8,6 +8,7 @@ local uv = vim.loop
 ---@field logger    Logger
 ---@field pipe      uv.uv_pipe_t?
 ---@field pid       number
+---@field buf       string Used to buffer Discord responses
 ---@field listeners fun(opcode: number, msg: string)[]
 local Discord = {}
 
@@ -25,7 +26,7 @@ function Discord:setup(client_id, logger, listener)
     self.listeners[1] = listener
   end
 
-  self:test_sockets(function() self:authorize() end)
+  self:test_sockets(function () self:authorize() end)
 end
 
 function Discord:is_connected()
@@ -88,7 +89,7 @@ function Discord:test_sockets(callback)
     local pipe = assert(uv.new_pipe(false))
     local num = tostring(i)..'/'..tostring(#sockets)
 
-    pipe:connect(socket, function(err)
+    pipe:connect(socket, function (err)
       if self:is_connected() then
         pipe:close()
         return
@@ -101,10 +102,13 @@ function Discord:test_sockets(callback)
       end
 
       self.pipe = pipe
-      self:read()
-      if callback then callback(self) end
+      self.pipe:read_start(function (err, chunk)
+        self:read(err, chunk)
+      end)
 
       self.logger:log('Discord:test_sockets', 'Successful connection with socket', socket, '('..num..')')
+
+      if callback then callback(self) end
     end)
   end
 end
@@ -112,7 +116,7 @@ end
 function Discord:disconnect()
   if not self.pipe then self.pipe:shutdown() end
 
-  self.pipe:shutdown(function()
+  self.pipe:shutdown(function ()
     if not self.pipe:is_active() then
       self.pipe:close()
     end
@@ -131,7 +135,7 @@ function Discord:set_activity(activity)
     }
   }
 
-  self.logger:log('Discord:set_activity', 'calling')
+  self.logger:debug('Discord:set_activity', 'setting presence')
   self:call(1, payload)
 end
 
@@ -146,39 +150,44 @@ function Discord:authorize()
 end
 
 ---@private
-function Discord:read()
-  self.pipe:read_start(function(err, chunk)
-    if err then
-      self.logger:error('Discord:read', err)
-      return
+---@param err string|nil
+---@param chunk string
+function Discord:read(err, chunk)
+  if err then
+    self.logger:error('Discord:read', err)
+    return
+  elseif not chunk then
+    return
+  end
+
+  chunk = tostring(chunk)
+  self.buf = (self.buf or '') .. chunk
+
+  while #self.buf >= 8 do
+    local opcode, len = struct.unpack('<ii', self.buf)
+
+    if #self.buf < 8 + len then
+      break
     end
 
-    chunk = type(chunk) ~= 'string' and tostring(chunk) or chunk
-
-    local opcode, length = struct.unpack('<ii', chunk)
-    local msg = chunk:sub(9, 8 + length)
-
-    local success, result = pcall(vim.fn.json_decode, msg)
-    if not success then
-      self.logger:error('Discord:read', result)
-      return
-    end
+    local msg = self.buf:sub(9, 8 + len)
+    self.buf = self.buf:sub(9 + len)
 
     for _, fn in ipairs(self.listeners) do
-      fn(opcode, result)
+      fn(opcode, msg)
     end
-  end)
+  end
 end
 
 ---@private
 ---@param opcode    number
 ---@param payload   table
 function Discord:call(opcode, payload)
-  vim.schedule(function()
+  vim.schedule(function ()
     local body = vim.fn.json_encode(payload)
     local msg = struct.pack('<ii', opcode, #body) .. body
 
-    self.pipe:write(msg, function(err)
+    self.pipe:write(msg, function (err)
       if err then
         self.logger:error('Discord:call', 'writing:', err)
       end
