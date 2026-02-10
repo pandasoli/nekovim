@@ -1,7 +1,7 @@
 require 'discord.uuid'
 
 local struct = require 'discord.deps.struct'
-local uv = vim.loop
+local uv = vim.uv
 
 ---@class Discord
 ---@field client_id string
@@ -30,7 +30,7 @@ function Discord:setup(client_id, logger, listener)
 end
 
 function Discord:is_connected()
-  return self.pipe and self.pipe:is_active()
+  return self.pipe
 end
 
 ---@private
@@ -151,7 +151,7 @@ end
 
 ---@private
 ---@param err string|nil
----@param chunk string
+---@param chunk? string
 function Discord:read(err, chunk)
   if err then
     self.logger:error('Discord:read', err)

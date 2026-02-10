@@ -9,6 +9,7 @@
 ---@field end?   (fun(self: NekoVim): integer?)|integer
 
 ---@class PresenceMakers : Presence
+---@field validate?   fun(slf: NekoVim): boolean
 ---@field state?      (fun(self: NekoVim): string?)|string
 ---@field details?    (fun(self: NekoVim): string?)|string
 ---@field timestamps? PresenceMakersTimestamps

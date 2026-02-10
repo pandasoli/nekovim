@@ -35,6 +35,13 @@ local makers = {
     end
   },
 
+  validate = function(self)
+    local props = self.buffers_props[self.current_buf]
+    local asset = assets:find(props.filePath, props.fileType)
+
+    return asset ~= nil
+  end,
+
   assets = {
     large_image = function(self)
       if self.presence_props.idling then
@@ -42,14 +49,18 @@ local makers = {
       end
 
       local props = self.buffers_props[self.current_buf]
-      local asset = assets:test(props.filePath, props.fileType)
-      return asset.key
+      local asset = assets:find(props.filePath, props.fileType)
+
+      return asset and asset.key or nil
     end,
     large_text = function(self)
       if self.presence_props.idling then return end
 
       local props = self.buffers_props[self.current_buf]
-      local asset = assets:test(props.filePath, props.fileType)
+      local asset = assets:find(props.filePath, props.fileType)
+
+      if not asset then return end
+
       return 'Editing ' .. asset.name .. ' file'
     end,
     small_image = function(self)
@@ -78,7 +89,9 @@ local makers = {
     end
 
     local props = self.buffers_props[self.current_buf]
-    local asset = assets:test(props.filePath, props.fileType)
+    local asset = assets:find(props.filePath, props.fileType)
+
+    if not asset then return end
 
     if asset.type == 'file explorer' then
       return 'Browsing between files...'

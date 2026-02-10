@@ -54,6 +54,11 @@ function EventHandlers:handle_ModeChanged(props)
 end
 
 function EventHandlers:handle_BufEnter(props)
+  -- TODO: 'Invalid buffer id: 1' error
+  local filePath = vim.api.nvim_buf_get_name(props.buf)
+  local fileType = vim.bo[props.buf].filetype or nil
+  print('BufEnter '..(filePath or 'nil')..' '..(fileType or 'nil'))
+
   self.nekovim.current_buf = props.buf
   self.nekovim:make_buf_props(props.buf)
   self.nekovim:update()

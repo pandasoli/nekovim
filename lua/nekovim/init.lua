@@ -140,6 +140,7 @@ function NekoVim:make_presence()
   local makers = self.presence_makers
 
   if type(makers) ~= 'table' then return end
+  if not makers.validate(self) then return end
 
   ---@type Presence
   local presence = {}
